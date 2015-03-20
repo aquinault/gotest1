@@ -2,12 +2,13 @@ package ihm
 
 import (
 		"github.com/revel/revel"
-		"github.com/dgrijalva/jwt-go"
-		"github.com/nu7hatch/gouuid"
- 		"myapp/app/models"
+		//"github.com/dgrijalva/jwt-go"
+		//"github.com/nu7hatch/gouuid"
+ 		//"myapp/app/models"
+ 		"myapp/app/utils"
  		"errors"
  		"fmt"
- 		"time"
+ 		//"time"
 )
 
 type IHMAuth struct {
@@ -16,12 +17,29 @@ type IHMAuth struct {
 
 const mySigningKey = "secret"
 
+func (c IHMAuth) Testtoken(token string) revel.Result {
+	fmt.Println("Testtoken() ", token)
+	greeting := "Test Token"
+
+	if token != "" {
+		myToken := token
+		json, _ := utils.ParseLoginToken(myToken, look)		
+		return c.Render(greeting, json)
+	}
+
+	return c.Render(greeting)
+}
+
 func (c IHMAuth) Token(username string, signature string, token string) revel.Result {
 
-	fmt.Println("Token2()")
-	greeting := "Auth"
+	fmt.Println("Token()")
+	greeting := "Generate Token"
 
+	
 	if username != ""  && signature != "" {
+
+		tokenString := utils.GenerateToken(username, signature)
+		/*
 		u4, err := uuid.NewV4()
 		if err != nil {
 			fmt.Println("error:", err)
@@ -44,7 +62,7 @@ func (c IHMAuth) Token(username string, signature string, token string) revel.Re
 		if err != nil {
 			return c.RenderText(err.Error())
 		}
-
+		*/
 		fmt.Println("tokenString : ", tokenString)
 		return c.Render(greeting, username, signature, tokenString)	
 	}
@@ -53,7 +71,7 @@ func (c IHMAuth) Token(username string, signature string, token string) revel.Re
 	//return c.Render()
 }
 
-
+/*
 func parseLoginToken(myToken string, myLookupKey func(interface{}) (interface{}, error)) (models.User, error) {
 	token, err := jwt.Parse(myToken, func(token *jwt.Token) (interface{}, error) {
 		fmt.Println(myToken)
@@ -86,7 +104,7 @@ func parseLoginToken(myToken string, myLookupKey func(interface{}) (interface{},
 
 
 }
-
+*/
 func look(kind interface{}) (interface{}, error) {
 	if str, ok := kind.(string); ok {
 		switch str {

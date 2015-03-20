@@ -9,7 +9,10 @@ GET     /                                       APIApp.Index
 
 # IHM
 GET     /auth/token                             IHMAuth.Token
-post     /auth/token                            IHMAuth.Token
+POST    /auth/token                             IHMAuth.Token
+GET     /auth/testtoken                         IHMAuth.Testtoken
+POST    /auth/testtoken                         IHMAuth.Testtoken
+
 
 # API
 GET     /api/auth/token                         APIAuth.Token

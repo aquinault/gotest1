@@ -2,12 +2,13 @@ package api
 
 import (
 		"github.com/revel/revel"
-		"github.com/dgrijalva/jwt-go"
-		"github.com/nu7hatch/gouuid"
- 		"myapp/app/models"
+		//"github.com/dgrijalva/jwt-go"
+		//"github.com/nu7hatch/gouuid"
+ 		//"myapp/app/models"
+ 		"myapp/app/utils"
  		"errors"
  		"fmt"
- 		"time"
+ 		//"time"
 )
 
 type APIAuth struct {
@@ -16,42 +17,6 @@ type APIAuth struct {
 
 const mySigningKey = "secret"
 
-func (c APIAuth) Token2(username string, signature string, token string) revel.Result {
-
-	fmt.Println("Token2()")
-	greeting := "Auth"
-
-	if username != ""  && signature != "" {
-		u4, err := uuid.NewV4()
-		if err != nil {
-			fmt.Println("error:", err)
-			//return
-		}
-		user := models.User{ u4.String(), username}
-
-		// Create the token
-		token := jwt.New(jwt.SigningMethodHS256)
-		token.Header["kind"] = "login"
-		// Set some claims
-		token.Claims["user"] = user.Username
-		token.Claims["id"] = user.Id
-		token.Claims["foo"] = "bar"
-		token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
-		// Sign and get the complete encoded token as a string
-
-		tokenString, err := token.SignedString([]byte(mySigningKey))
-		fmt.Println("err : ", err)
-		if err != nil {
-			return c.RenderText(err.Error())
-		}
-
-		fmt.Println("tokenString : ", tokenString)
-		return c.Render(greeting, username, signature, tokenString)	
-	}
-
-	return c.Render(greeting, username, signature, token)
-	//return c.Render()
-}
 
 func (c APIAuth) Token(username string, signature string) revel.Result {
 	fmt.Println("Token()")
@@ -59,92 +24,19 @@ func (c APIAuth) Token(username string, signature string) revel.Result {
 	fmt.Println("username ", username)
 	fmt.Println("signature ", signature)
 
-
-	/*user := new(models.User)
-	user.Id = 0
-	user.Name = "John Doo"
-	*/
-	
-	u4, err := uuid.NewV4()
-	if err != nil {
-		fmt.Println("error:", err)
-		//return
-	}
-	fmt.Println(u4)
-
-
-	fmt.Println("uuid ", u4)
-	user := models.User{ u4.String(), username}
-
-
-	// Create the token
-    token := jwt.New(jwt.SigningMethodHS256)
-    token.Header["kind"] = "login"
-    // Set some claims
-    token.Claims["user"] = user.Username
-    token.Claims["id"] = user.Id
-    token.Claims["foo"] = "bar"
-    token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
-    // Sign and get the complete encoded token as a string
-	//fmt.Println("mySigningKey : ", mySigningKey)
-
-
-    tokenString, err := token.SignedString([]byte(mySigningKey))
-	fmt.Println("err : ", err)
-    if err != nil {
-    	return c.RenderText(err.Error())
-	}
-	
-	fmt.Println("token : ", tokenString)
-
-    //return c.RenderText(tokenString)
-    return c.Token2(username, signature, tokenString)
-    //return c.Render(username, signature, tokenString)  // <--- REVERSE ROUTE
+	return c.RenderText(utils.GenerateToken(username, signature))
 }
 
 
 func (c APIAuth) TestToken() revel.Result {
 	fmt.Println("TestToken()")
 
-	myToken := "eyJhbGciOiJIUzI1NiIsImtpbmQiOiJsb2dpbiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0MjcwMzc2NzIsImZvbyI6ImJhciIsImlkIjowLCJ1c2VyIjoiSm9obiBEb28ifQ.kRX5jZ4C9GcDJE0vHX0Ezbs-F_-KjT2bHNGqbIrNy0c"
+	myToken := "eyJhbGciOiJIUzI1NiIsImtpbmQiOiJsb2dpbiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0MjcxMjMzNjMsImZvbyI6ImJhciIsImlkIjoiMGUzZWQ3NmItYmI3Ni00NTUyLTQ2ZDktNTkwOWU0NzcwMWE2IiwidXNlciI6ImFxdWluYXVsdCJ9.k-WxkoTV3Vo1ziFa_V8dobCLCksMIqT-f4TImvLQqoY"
 
-	value, _ := parseLoginToken(myToken, look)
-	fmt.Println("value", value)
+	value, _ := utils.ParseLoginToken(myToken, look)
+	//fmt.Println("value", value)
 
 	return c.RenderJson(value)
-}
-
-func parseLoginToken(myToken string, myLookupKey func(interface{}) (interface{}, error)) (models.User, error) {
-	token, err := jwt.Parse(myToken, func(token *jwt.Token) (interface{}, error) {
-		fmt.Println(myToken)
-		return myLookupKey(token.Header["kind"])
-	})
-
-	fmt.Println("token", token)
-
-	if token.Valid {
-		fmt.Println("You look nice today")
-		return models.User{ token.Claims["id"].(string), token.Claims["user"].(string)}, nil
-
-
-	} else if ve, ok := err.(*jwt.ValidationError); ok {
-		if ve.Errors&jwt.ValidationErrorMalformed != 0 {
-			fmt.Println("That's not even a token")
-			return models.User{}, err
-		} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
-			// Token is either expired or not active yet
-			fmt.Println("Timing is everything")
-			return models.User{}, err
-		} else {
-			fmt.Println("Couldn't handle this token:", err)
-			return models.User{}, err
-		}
-	} else {
-		fmt.Println("Couldn't handle this token:", err)
-		return models.User{}, err
-	}
-
-
 }
 
 func look(kind interface{}) (interface{}, error) {
