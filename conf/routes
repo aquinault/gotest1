@@ -4,16 +4,22 @@
 
 module:testrunner
 
-GET     /                                       App.Index
-
-GET     /auth/token                             Auth.Token
-GET     /auth/testtoken/                        Auth.TestToken
+GET     /                                       APIApp.Index
 
 
-GET     /users/me                               Users.Me
-GET     /users                                  Users.List
-GET 	/users/:id   							Users.Get
-#POST 	/users 									User.Create
+# IHM
+GET     /auth/token                             IHMAuth.Token
+post     /auth/token                            IHMAuth.Token
+
+# API
+GET     /api/auth/token                         APIAuth.Token
+POST    /api/auth/token                         APIAuth.Token
+GET     /api/auth/testtoken/                    APIAuth.TestToken
+
+GET     /api/users/me                           APIUsers.Me
+GET     /api/users                              APIUsers.List
+GET 	/api/users/:id   						APIUsers.Get
+#POST 	/api/users 								APIUser.Create
 
 
 

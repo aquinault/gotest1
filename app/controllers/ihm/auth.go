@@ -1,66 +1,58 @@
-package controllers
+package ihm
 
 import (
 		"github.com/revel/revel"
 		"github.com/dgrijalva/jwt-go"
+		"github.com/nu7hatch/gouuid"
  		"myapp/app/models"
  		"errors"
  		"fmt"
  		"time"
 )
 
-type Auth struct {
+type IHMAuth struct {
 	*revel.Controller
 }
 
 const mySigningKey = "secret"
 
+func (c IHMAuth) Token(username string, signature string, token string) revel.Result {
 
-func (c Auth) Token() revel.Result {
-	fmt.Println("Token()")
+	fmt.Println("Token2()")
+	greeting := "Auth"
 
-	/*user := new(models.User)
-	user.Id = 0
-	user.Name = "John Doo"
-	*/
-	user := models.User{0, "John Doo"}
+	if username != ""  && signature != "" {
+		u4, err := uuid.NewV4()
+		if err != nil {
+			fmt.Println("error:", err)
+			//return
+		}
+		user := models.User{ u4.String(), username}
 
+		// Create the token
+		token := jwt.New(jwt.SigningMethodHS256)
+		token.Header["kind"] = "login"
+		// Set some claims
+		token.Claims["user"] = user.Username
+		token.Claims["id"] = user.Id
+		token.Claims["foo"] = "bar"
+		token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+		// Sign and get the complete encoded token as a string
 
-	// Create the token
-    token := jwt.New(jwt.SigningMethodHS256)
-    token.Header["kind"] = "login"
-    // Set some claims
-    token.Claims["user"] = user.Username
-    token.Claims["id"] = user.Id
-    token.Claims["foo"] = "bar"
-    token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
-    // Sign and get the complete encoded token as a string
-	fmt.Println("mySigningKey : ", mySigningKey)
+		tokenString, err := token.SignedString([]byte(mySigningKey))
+		fmt.Println("err : ", err)
+		if err != nil {
+			return c.RenderText(err.Error())
+		}
 
-
-
-    tokenString, err := token.SignedString([]byte(mySigningKey))
-	fmt.Println("err : ", err)
-    if err != nil {
-    	return c.RenderText(err.Error())
+		fmt.Println("tokenString : ", tokenString)
+		return c.Render(greeting, username, signature, tokenString)	
 	}
-	
-	fmt.Println("token : ", tokenString)
 
-    return c.RenderText(tokenString)
+	return c.Render(greeting, username, signature, token)
+	//return c.Render()
 }
 
-
-func (c Auth) TestToken() revel.Result {
-	fmt.Println("TestToken()")
-
-	myToken := "eyJhbGciOiJIUzI1NiIsImtpbmQiOiJsb2dpbiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0MjcwMzc2NzIsImZvbyI6ImJhciIsImlkIjowLCJ1c2VyIjoiSm9obiBEb28ifQ.kRX5jZ4C9GcDJE0vHX0Ezbs-F_-KjT2bHNGqbIrNy0c"
-
-	value, _ := parseLoginToken(myToken, look)
-	fmt.Println("value", value)
-
-	return c.RenderJson(value)
-}
 
 func parseLoginToken(myToken string, myLookupKey func(interface{}) (interface{}, error)) (models.User, error) {
 	token, err := jwt.Parse(myToken, func(token *jwt.Token) (interface{}, error) {
@@ -72,7 +64,7 @@ func parseLoginToken(myToken string, myLookupKey func(interface{}) (interface{},
 
 	if token.Valid {
 		fmt.Println("You look nice today")
-		return models.User{ int32(token.Claims["id"].(float64)), token.Claims["user"].(string)}, nil
+		return models.User{ token.Claims["id"].(string), token.Claims["user"].(string)}, nil
 
 
 	} else if ve, ok := err.(*jwt.ValidationError); ok {

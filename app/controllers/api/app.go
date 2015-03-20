@@ -1,12 +1,12 @@
-package controllers
+package api
 
 import "github.com/revel/revel"
 
-type App struct {
+type APIApp struct {
 	*revel.Controller
 }
 
-func (c App) Index() revel.Result {
+func (c APIApp) Index() revel.Result {
 	greeting := "A"
 	return c.Render(greeting)
 	//return c.Render()
