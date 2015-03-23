@@ -18,13 +18,14 @@ POST    /auth/testtoken                         IHMAuth.Testtoken
 GET     /api/auth/token                         APIAuth.Token
 POST    /api/auth/token                         APIAuth.Token
 GET     /api/auth/testtoken/                    APIAuth.TestToken
-
+		
 GET     /api/users/me                           APIUsers.Me
 GET     /api/users                              APIUsers.List
 GET 	/api/users/:id   						APIUsers.Get
 #POST 	/api/users 								APIUser.Create
 
-
+GET		/api2/login								APIUsers.Login
+GET		/api2/createtestusers					APIUsers.CreateUsers
 
 
 # Ignore favicon requests
