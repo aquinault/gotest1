@@ -2,7 +2,7 @@ package api
 
 import (
 		"github.com/revel/revel"
- 		"myapp/app/models"
+ 		"gotest1/app/models"
  		"strconv"
  		"fmt"
 )
