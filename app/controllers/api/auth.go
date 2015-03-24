@@ -11,14 +11,14 @@ import (
  		//"time"
 )
 
-type APIAuth struct {
+type Auth struct {
 	*revel.Controller
 }
 
 const mySigningKey = "secret"
 
 
-func (c APIAuth) Token(username string, signature string) revel.Result {
+func (c Auth) Token(username string, signature string) revel.Result {
 	fmt.Println("Token()")
 
 	fmt.Println("username ", username)
@@ -28,7 +28,7 @@ func (c APIAuth) Token(username string, signature string) revel.Result {
 }
 
 
-func (c APIAuth) TestToken() revel.Result {
+func (c Auth) TestToken() revel.Result {
 	fmt.Println("TestToken()")
 
 	myToken := "eyJhbGciOiJIUzI1NiIsImtpbmQiOiJsb2dpbiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0MjcxMjMzNjMsImZvbyI6ImJhciIsImlkIjoiMGUzZWQ3NmItYmI3Ni00NTUyLTQ2ZDktNTkwOWU0NzcwMWE2IiwidXNlciI6ImFxdWluYXVsdCJ9.k-WxkoTV3Vo1ziFa_V8dobCLCksMIqT-f4TImvLQqoY"

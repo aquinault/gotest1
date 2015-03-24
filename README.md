@@ -1,5 +1,11 @@
 # Welcome to Revel
 
+## Commandes
+
+curl.exe -F 'username=jdoo' -F 'password=password' localhost:9000/api2/login
+mongod --dbpath d:\code\mongo\data
+
+
 ## Getting Started
 
 A high-productivity web framework for the [Go language](http://www.golang.org/).

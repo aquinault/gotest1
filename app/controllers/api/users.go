@@ -16,7 +16,10 @@ type APIUsers struct {
 
 var users []models.User = []models.User{{"0", "John Doo", "0","0","0","0","0","0"}, {"1", "Maria Luis","0","0","0","0","0","0"}}
 
-func (c APIUsers) Login() revel.Result {
+func (c APIUsers) Login(username string, password string) revel.Result {
+	fmt.Println("username:", username)
+	fmt.Println("password:", password)
+
     session, err := mgo.Dial("localhost")
     if err != nil {
         panic(err)
@@ -34,7 +37,8 @@ func (c APIUsers) Login() revel.Result {
 	*/
 
 	result := models.User{}
-    err = c1.Find(bson.M{"username": "jdoo", "password" : "password"}).One(&result)
+    //err = c1.Find(bson.M{"username": "jdoo", "password" : "password"}).One(&result)
+    err = c1.Find(bson.M{"username": username, "password" : password}).One(&result)
     if err != nil {
         log.Fatal(err)
     }
