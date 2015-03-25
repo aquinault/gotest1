@@ -52,14 +52,14 @@ func GenerateToken(username string, signature string) string {
 
 func ParseLoginToken(myToken string, myLookupKey func(interface{}) (interface{}, error)) (models.User, error) {
 
-	fmt.Println("utils.parseLoginToken()")
+	fmt.Println("jwt.parseLoginToken()")
 
 	token, err := jwt.Parse(myToken, func(token *jwt.Token) (interface{}, error) {
-		fmt.Println(myToken)
+		//fmt.Println(myToken)
 		return myLookupKey(token.Header["kind"])
 	})
 
-	fmt.Println("token", token)
+	//fmt.Println("token", token)
 
 	if token.Valid {
 		fmt.Println("You look nice today")

@@ -8,6 +8,7 @@ import (
  		"strconv"
  		"fmt"
  		"log"
+        "net/http"
         //"errors"
         //"encoding/json"
         "gopkg.in/mgo.v2"
@@ -17,47 +18,43 @@ import (
 type APIUsers struct {
 	*revel.Controller
     mongo.Mongo
+    jwt.Security
 }
 
 var users []models.User = []models.User{{"0", "John Doo", "0","0","0","0","0","0"}, {"1", "Maria Luis","0","0","0","0","0","0"}}
 
-
 func (c APIUsers) List2() revel.Result {
     fmt.Println("List2()")
 
-    // ToDo : a encapsuler dans une classe parent
+    // Verification du Token
+    // Si invalide, retourne un 401
     //
-    var token string
-    // O regarde sur le token est dans le Header sinon dans le cookie
-    if len(c.Request.Header["Token"]) != 0 {
-        token = c.Request.Header.Get("Token")
+    res, err := c.CheckToken();
+    fmt.Println(err) 
+    if res {
+       fmt.Println("Token OK") 
     } else {
-        token = c.Session["Token"]
-    }
-    if token != "" {
-        value, _ := jwt.ParseLoginToken(token, look)
-        fmt.Println("Parse Login Token:", value)
+        fmt.Println("Token KO")       
+        c.Response.Status = http.StatusUnauthorized       
+        return c.RenderError(&revel.Error{
+            Title:       "Not authorized",
+            Description: "Token not valid for url " + string(c.Request.RequestURI ),
+        })
     }
     //
     //
-
-
     c1 := c.MongoDatabase.C("users")
-
     results := []models.User{}
-    err := c1.Find(bson.M{}).All(&results)
+    err = c1.Find(bson.M{}).All(&results)
     if err != nil {
         log.Fatal(err)
     }
-
-    //results2 := []models.PublicUser{results}
 
     results2 := make([]models.PublicUser, len(results))
     for i := 0; i < 3; i++ {
         //results2[i] = models.PublicUser{User: &results[i], Token: "tokenString"}
         results2[i] = models.PublicUser{User: &results[i]}
     }
-    //copy(results2, results)
 
     return c.RenderJson(results2)
 }
