@@ -1,8 +1,8 @@
-package utils
+package mongo
 
 import (
         "github.com/revel/revel"
- 		//"fmt"
+ 		"fmt"
         "gopkg.in/mgo.v2"
         "sync"
         //"gopkg.in/mgo.v2/bson"
@@ -25,7 +25,7 @@ var dial sync.Once
 // Renvoie la session mgo en cours, si aucune n'existe, elle est créée
 func GetSession() *mgo.Session {
     host, _ := revel.Config.String("mongo.host")
-
+    fmt.Println("mongo.host:", host)
     // Appelé une seule fois grace au sync et de maniere synchrone
     dial.Do(func() {
         var err error
@@ -41,6 +41,7 @@ func GetSession() *mgo.Session {
 func (c *Mongo) Bind() revel.Result {
     // Oublie pas de mettre mongo.database dans  app.conf, genre "localhost"
     databaseName, _ := revel.Config.String("mongo.database")
+    fmt.Println("mongo.database:", databaseName)
     c.MongoSession = GetSession().Clone()
     c.MongoDatabase = c.MongoSession.DB(databaseName)
     return nil

@@ -26,7 +26,7 @@ GET     /api/users                              APIUsers.List
 GET 	/api/users/:id   						APIUsers.Get
 #POST 	/api/users 								APIUser.Create
 
-POST	/api2/login								APIUsers.Login
+POST	/api2/login								APIUsers.Login2
 GET		/api2/createtestusers					APIUsers.CreateUsers
 
 
