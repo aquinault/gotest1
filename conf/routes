@@ -26,8 +26,9 @@ GET     /api/users                              APIUsers.List
 GET 	/api/users/:id   						APIUsers.Get
 #POST 	/api/users 								APIUser.Create
 
-POST	/api2/login								APIUsers.Login2
+POST	/api2/login								APIUsers.Login
 GET		/api2/createtestusers					APIUsers.CreateUsers
+GET     /api2/users                              APIUsers.List2
 
 
 # Ignore favicon requests

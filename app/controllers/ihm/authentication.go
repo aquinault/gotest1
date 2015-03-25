@@ -2,7 +2,8 @@ package ihm
 
 import (
 		"github.com/revel/revel"
- 		"gotest1/app/utils"
+ 		"gotest1/app/modules/jwt"
+ 		//"gotest1/app/utils"
  		"errors"
  		"fmt"
 )
@@ -24,7 +25,7 @@ func (c Authentication) Testtoken(token string) revel.Result {
 
 	if token != "" {
 		myToken := token
-		json, _ := utils.ParseLoginToken(myToken, look)		
+		json, _ := jwt.ParseLoginToken(myToken, look)		
 		return c.Render(greeting, json)
 	}
 	return c.Render(greeting)
@@ -36,7 +37,7 @@ func (c Authentication) Token(username string, signature string, token string) r
 	
 	if username != ""  && signature != "" {
 
-		tokenString := utils.GenerateToken(username, signature)
+		tokenString := jwt.GenerateToken(username, signature)
 
 		fmt.Println("tokenString : ", tokenString)
 		return c.Render(greeting, username, signature, tokenString)	

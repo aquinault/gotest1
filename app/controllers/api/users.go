@@ -4,9 +4,12 @@ import (
 		"github.com/revel/revel"
         "gotest1/app/models"
         "gotest1/app/modules/mongo"
+        "gotest1/app/modules/jwt"
  		"strconv"
  		"fmt"
  		"log"
+        //"errors"
+        //"encoding/json"
         "gopkg.in/mgo.v2"
         "gopkg.in/mgo.v2/bson"
 )
@@ -18,13 +21,52 @@ type APIUsers struct {
 
 var users []models.User = []models.User{{"0", "John Doo", "0","0","0","0","0","0"}, {"1", "Maria Luis","0","0","0","0","0","0"}}
 
-func (c APIUsers) Login2(username string, password string) revel.Result {
+
+func (c APIUsers) List2() revel.Result {
+    fmt.Println("List2()")
+
+    // ToDo : a encapsuler dans une classe parent
+    //
+    var token string
+    // O regarde sur le token est dans le Header sinon dans le cookie
+    if len(c.Request.Header["Token"]) != 0 {
+        token = c.Request.Header.Get("Token")
+    } else {
+        token = c.Session["Token"]
+    }
+    if token != "" {
+        value, _ := jwt.ParseLoginToken(token, look)
+        fmt.Println("Parse Login Token:", value)
+    }
+    //
+    //
+
+
+    c1 := c.MongoDatabase.C("users")
+
+    results := []models.User{}
+    err := c1.Find(bson.M{}).All(&results)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    //results2 := []models.PublicUser{results}
+
+    results2 := make([]models.PublicUser, len(results))
+    for i := 0; i < 3; i++ {
+        //results2[i] = models.PublicUser{User: &results[i], Token: "tokenString"}
+        results2[i] = models.PublicUser{User: &results[i]}
+    }
+    //copy(results2, results)
+
+    return c.RenderJson(results2)
+}
+
+func (c APIUsers) Login(username string, password string) revel.Result {
     fmt.Println("username:", username)
     fmt.Println("password:", password)
 
     c1 := c.MongoDatabase.C("users")
-    fmt.Println("c1:", c1)
-
 
     result := models.User{}
     //err = c1.Find(bson.M{"username": "jdoo", "password" : "password"}).One(&result)
@@ -35,39 +77,18 @@ func (c APIUsers) Login2(username string, password string) revel.Result {
 
     fmt.Println("User:", result)
 
-    return c.RenderJson(result)
-}
+    signingKey, _ := revel.Config.String("app.signingKey")
 
-func (c APIUsers) Login(username string, password string) revel.Result {
-	fmt.Println("username:", username)
-	fmt.Println("password:", password)
+    tokenString := jwt.GenerateToken(username, signingKey)
+    fmt.Println("tokenString : ", tokenString)
 
-    session, err := mgo.Dial("localhost")
-    if err != nil {
-        panic(err)
-    }
-    defer session.Close()
+    result2 := models.PublicUser{User: &result, Token: tokenString}
 
-    // Optional. Switch the session to a monotonic behavior.
-    session.SetMode(mgo.Monotonic, true)
+    fmt.Println("User2:", result2)
 
-    c1 := session.DB("test").C("users")
-    /*err = c1.Insert(&user1, &user2, &user3)
-    if err != nil {
-            log.Fatal(err)
-    }
-	*/
+    c.Session["Token"] = string(tokenString)
 
-	result := models.User{}
-    //err = c1.Find(bson.M{"username": "jdoo", "password" : "password"}).One(&result)
-    err = c1.Find(bson.M{"username": username, "password" : password}).One(&result)
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    fmt.Println("User:", result)
-
-	return c.RenderJson(result)
+    return c.RenderJson(result2)
 }
 
 func (c APIUsers) CreateUsers() revel.Result {
