@@ -158,6 +158,21 @@ func (c Users) Create(username string, firstname string, lastname string, email 
     return c.RenderJson(user)
 }
 
+func (c Users) Delete(id string) revel.Result {
+    fmt.Println("id:", id)
+    c1 := c.MongoDatabase.C("users")
+
+    //user := models.User{id, username, firstname, lastname, email, twitteruid, facebookuid, password}
+
+    err := c1.Remove(bson.M{"id": id})
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    return c.RenderJson(bson.M{"id": id})
+}
+
+
 func (c Users) CreateUsers() revel.Result {
 	fmt.Println("CreateUsers()")
 	user1 := models.User{"1", "jdoo","John","Doo","john@doo","0","0","password"}

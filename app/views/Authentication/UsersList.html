@@ -50,9 +50,51 @@
   </div>
 </div>
 
+<div id="todelete"></div>
+
 {{template "footer.html" .}}
 
 <script>
+
+$('#result').on('click', '.btn-danger', function () {
+    var currentRow = $(this).closest("tr");
+    //do something with values in td's
+    var username = currentRow.find("td").eq(0).text();
+    var firstname = currentRow.find("td").eq(1).text();
+    var lastname = currentRow.find("td").eq(2).text();
+    var email = currentRow.find("td").eq(3).text();
+    var id = currentRow.find("td").eq(4).text();
+    var twitteruid = currentRow.find("td").eq(5).text();
+    var facebookuid = currentRow.find("td").eq(6).text();
+
+    var user = {
+      //username : username,
+      //firstname: firstname, 
+      //lastname: lastname,
+      //email: email,
+      id: id,
+      //twitteruid: twitteruid,
+      //facebookuid: facebookuid
+    }
+    //and so on
+    console.log(user);
+
+    var url = "/api/users/" + id
+
+    $.ajax({
+        url: url,
+        type: 'DELETE',
+        //data: user,
+        //contentType: "application/json",
+        success: function(result) {
+            // Do something with the result
+            console.log('user id=' + id + ' deleted');
+        }
+    });
+
+});
+
+
 // Attach a submit handler to the form
 $( "#searchForm" ).click(function() {
 
@@ -73,10 +115,10 @@ $( "#searchForm" ).click(function() {
                   'id' + '</th><th>' + 
                   'twitteruid' + '</th><th>' + 
                   'facebookuid' + '</th><th>' + 
-                  'token' + '</th></thead>'
+                  'Delete' + '</th></thead>'
 
      $.each(data, function (i, item) {
-        trHTML += '<tbody><tr><td>' +
+        trHTML += '<tbody><tr><td class="nr">' +
                     item.username + '</td><td>' + 
                     item.firstname + '</td><td>' + 
                     item.lastname  + '</td><td>' + 
@@ -84,7 +126,7 @@ $( "#searchForm" ).click(function() {
                     item.id  + '</td><td>' + 
                     item.twitteruid  + '</td><td>' + 
                     item.facebookuid  + '</td><td>' + 
-                    item.token  + '<td></tr></tbody>';
+                    '<input type="button" class="btn btn-danger" value="Delete">' + '<td></tr></tbody>';
       });
 
       $("#result").empty().append(trHTML);
