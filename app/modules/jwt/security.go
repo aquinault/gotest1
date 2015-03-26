@@ -2,6 +2,7 @@ package jwt
 
 import (
         "github.com/revel/revel"
+        "gotest1/app/models"
  		"fmt"
         "errors"
     )
@@ -11,8 +12,9 @@ type Security struct {
     *revel.Controller
 }
 
+
 // Verifie la validity du token dans le cookie et la session
-func (c *Security) CheckToken() (bool, error) {
+func (c *Security) CheckToken() (*models.User, error) {
     fmt.Println("CheckToken")
     // regarde sur le token est dans le Header sinon dans le cookie
     var token string
@@ -22,11 +24,11 @@ func (c *Security) CheckToken() (bool, error) {
         token = c.Session["Token"]
     }
     if token != "" {
-        _, err := ParseLoginToken(token, look)
-        return true, err
+        user, err := ParseLoginToken(token, look)
+        return &user, err
     }
 
-    return false, errors.New("unknown jwt token")
+    return nil, errors.New("unknown jwt token")
 }
 
 func look(kind interface{}) (interface{}, error) {
@@ -39,7 +41,6 @@ func look(kind interface{}) (interface{}, error) {
     }
     return "", errors.New("unknown jwt kind")
 }
-
 
 
 

@@ -6,30 +6,32 @@ module:testrunner
 
 GET     /                                       APIApp.Index
 
-
 # IHM
 GET 	/login 									Authentication.Login
+
+GET 	/users/login							Authentication.UsersLogin
+GET 	/users/create							Authentication.UsersCreate
+GET 	/users/list								Authentication.UsersList
 
 GET     /token                        		    Authentication.Token
 POST    /token                        		    Authentication.Token
 GET     /testtoken                   	      	Authentication.Testtoken
 POST    /testtoken                      	   	Authentication.Testtoken
 
-
 # API
-GET     /api/auth/token                         Auth.Token
-POST    /api/auth/token                         Auth.Token
-GET     /api/auth/testtoken/                    Auth.TestToken
-		
-GET     /api/users/me                           APIUsers.Me
-GET     /api/users                              APIUsers.List
-GET 	/api/users/:id   						APIUsers.Get
-#POST 	/api/users 								APIUser.Create
+POST	/api/login								Users.Login
+GET     /api/users/me                           Users.Me
+GET     /api/users                              Users.List
+POST    /api/users                              Users.Create
+GET 	/api/users/:id   						Users.Get
+GET		/api/createtestusers					Users.CreateUsers
 
-POST	/api2/login								APIUsers.Login
-GET		/api2/createtestusers					APIUsers.CreateUsers
-GET     /api2/users                              APIUsers.List2
 
+
+
+#GET     /api/auth/token                         Auth.Token
+#POST    /api/auth/token                         Auth.Token
+#GET     /api/auth/testtoken/                    Auth.TestToken
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

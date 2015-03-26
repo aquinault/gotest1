@@ -19,6 +19,23 @@ func (c Authentication) Login() revel.Result {
 	return c.Render()
 }
 
+func (c Authentication) UsersLogin() revel.Result {
+	fmt.Println("UsersLogin()")
+	return c.Render()
+}
+
+func (c Authentication) UsersCreate() revel.Result {
+	fmt.Println("UsersCreate()")
+	return c.Render()
+}
+
+func (c Authentication) UsersList() revel.Result {
+	fmt.Println("UsersCreate()")
+	return c.Render()
+}
+
+
+
 func (c Authentication) Testtoken(token string) revel.Result {
 	fmt.Println("Testtoken() ", token)
 	greeting := "Test Token"

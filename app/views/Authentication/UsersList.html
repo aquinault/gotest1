@@ -1,0 +1,94 @@
+{{set . "title" "Home"}}
+{{template "header.html" .}}
+
+<header class="hero-unit" style="background-color:#A9F16C">
+  <div class="container">
+    <div class="row">
+      <div class="hero-text">
+        <h1>Users list</h1>
+        <p></p>
+      </div>
+    </div>
+  </div>
+</header>
+<br>
+
+<form>
+  <div class="container">
+    <!--div class="row">
+      <div class="col-md-6">
+        <form>
+          <div class="form-group">
+            <input type="name" class="form-control" id="exampleInputUsername1" placeholder="Enter username" name="username">
+          </div>
+          <div class="form-group">
+            <input type="password" class="form-control" id="exampleInputSignature1" placeholder="Signature" name="password">
+          </div>
+        </form>
+      </div>
+    </div-->
+
+    <div class="row">
+      <div class="col-md-6">
+        <button type="button" class="btn btn-default" id="searchForm">Submit</button>
+      </div>
+    </div>
+
+    <br>
+    <div class="row">
+      <div class="col-md-6">
+        <table id='result' class="table"><table>  
+      </div>
+    </div>
+  </div>
+</form>
+<div class="container">
+  <div class="row">
+    <div class="span6">
+      {{template "flash.html" .}}
+    </div>
+  </div>
+</div>
+
+{{template "footer.html" .}}
+
+<script>
+// Attach a submit handler to the form
+$( "#searchForm" ).click(function() {
+
+  // Get some values from elements on the page:
+  var url = "/api/users"
+ 
+  // Send the data using post
+  var posting = $.get( url, {} );
+ 
+  // Put the results in a div
+  posting.done(function( data ) {
+
+    var trHTML = '<thead><tr><th>' + 
+                  'username' + '</th><th>' + 
+                  'firstname'  + '</th><th>' + 
+                  'lastname' + '</th><th>' + 
+                  'email' + '</th><th>' + 
+                  'id' + '</th><th>' + 
+                  'twitteruid' + '</th><th>' + 
+                  'facebookuid' + '</th><th>' + 
+                  'token' + '</th></thead>'
+
+     $.each(data, function (i, item) {
+        trHTML += '<tbody><tr><td>' +
+                    item.username + '</td><td>' + 
+                    item.firstname + '</td><td>' + 
+                    item.lastname  + '</td><td>' + 
+                    item.email  + '</td><td>' + 
+                    item.id  + '</td><td>' + 
+                    item.twitteruid  + '</td><td>' + 
+                    item.facebookuid  + '</td><td>' + 
+                    item.token  + '<td></tr></tbody>';
+      });
+
+      $("#result").empty().append(trHTML);
+
+  });
+});
+</script>

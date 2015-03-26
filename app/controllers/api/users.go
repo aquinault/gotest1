@@ -5,7 +5,6 @@ import (
         "gotest1/app/models"
         "gotest1/app/modules/mongo"
         "gotest1/app/modules/jwt"
- 		"strconv"
  		"fmt"
  		"log"
         "net/http"
@@ -15,32 +14,81 @@ import (
         "gopkg.in/mgo.v2/bson"
 )
 
-type APIUsers struct {
+type Users struct {
 	*revel.Controller
     mongo.Mongo
     jwt.Security
 }
 
-var users []models.User = []models.User{{"0", "John Doo", "0","0","0","0","0","0"}, {"1", "Maria Luis","0","0","0","0","0","0"}}
-
-func (c APIUsers) List2() revel.Result {
-    fmt.Println("List2()")
+func (c Users) Me() revel.Result {
+    fmt.Println("Me()")
 
     // Verification du Token
     // Si invalide, retourne un 401
     //
     res, err := c.CheckToken();
-    fmt.Println(err) 
-    if res {
-       fmt.Println("Token OK") 
-    } else {
-        fmt.Println("Token KO")       
+    if res == nil {
         c.Response.Status = http.StatusUnauthorized       
         return c.RenderError(&revel.Error{
             Title:       "Not authorized",
             Description: "Token not valid for url " + string(c.Request.RequestURI ),
         })
     }
+
+    //
+    //
+    c1 := c.MongoDatabase.C("users")
+    result := models.User{}
+    err = c1.Find(bson.M{"username": (*res).Username}).One(&result)
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    return c.RenderJson(result)
+}
+
+func (c Users) Get(id string) revel.Result {
+    //fmt.Println("Get2(index string)")
+    // Verification du Token
+    // Si invalide, retourne un 401
+    //
+    res, err := c.CheckToken();
+    if res == nil {
+        c.Response.Status = http.StatusUnauthorized       
+        return c.RenderError(&revel.Error{
+            Title:       "Not authorized",
+            Description: "Token not valid for url " + string(c.Request.RequestURI ),
+        })
+    }
+
+    //
+    //
+    c1 := c.MongoDatabase.C("users")
+    result := models.User{}
+    err = c1.Find(bson.M{"id": id}).One(&result)
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    return c.RenderJson(result)
+}
+
+
+func (c Users) List() revel.Result {
+    fmt.Println("List2()")
+
+    // Verification du Token
+    // Si invalide, retourne un 401
+    //
+    res, err := c.CheckToken();
+    if res == nil {
+        c.Response.Status = http.StatusUnauthorized       
+        return c.RenderError(&revel.Error{
+            Title:       "Not authorized",
+            Description: "Token not valid for url " + string(c.Request.RequestURI ),
+        })
+    }
+    
     //
     //
     c1 := c.MongoDatabase.C("users")
@@ -51,7 +99,7 @@ func (c APIUsers) List2() revel.Result {
     }
 
     results2 := make([]models.PublicUser, len(results))
-    for i := 0; i < 3; i++ {
+    for i := 0; i < len(results); i++ {
         //results2[i] = models.PublicUser{User: &results[i], Token: "tokenString"}
         results2[i] = models.PublicUser{User: &results[i]}
     }
@@ -59,7 +107,7 @@ func (c APIUsers) List2() revel.Result {
     return c.RenderJson(results2)
 }
 
-func (c APIUsers) Login(username string, password string) revel.Result {
+func (c Users) Login(username string, password string) revel.Result {
     fmt.Println("username:", username)
     fmt.Println("password:", password)
 
@@ -88,7 +136,29 @@ func (c APIUsers) Login(username string, password string) revel.Result {
     return c.RenderJson(result2)
 }
 
-func (c APIUsers) CreateUsers() revel.Result {
+func (c Users) Create(username string, firstname string, lastname string, email string, id string, twitteruid string, facebookuid string, password string) revel.Result {
+    fmt.Println("username:", username)
+    fmt.Println("firstname:", firstname)
+    fmt.Println("lastname:", lastname)
+    fmt.Println("email:", email)
+    fmt.Println("id:", id)
+    fmt.Println("twitteruid:", twitteruid)
+    fmt.Println("facebookuid:", facebookuid)
+    fmt.Println("password:", password)
+
+    c1 := c.MongoDatabase.C("users")
+
+    user := models.User{id, username, firstname, lastname, email, twitteruid, facebookuid, password}
+
+    err := c1.Insert(&user)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    return c.RenderJson(user)
+}
+
+func (c Users) CreateUsers() revel.Result {
 	fmt.Println("CreateUsers()")
 	user1 := models.User{"1", "jdoo","John","Doo","john@doo","0","0","password"}
 	user2 := models.User{"2", "mluis","Maria","Luis","maria@luis","0","0","password"}
@@ -114,33 +184,5 @@ func (c APIUsers) CreateUsers() revel.Result {
             log.Fatal(err)
     }
 
-
 	return c.RenderJson(users)
 }
-
-
-func (c APIUsers) Me() revel.Result {
-	fmt.Println("Me()")
-//	user := models.User{0, "John Doo"}	
-	return c.RenderJson(users[0])
-}
-
-func (c APIUsers) List() revel.Result {
-	fmt.Println("List()")
-
-	newUser := models.User{string(len(users)), "user" + string(strconv.Itoa(len(users))),"0","0","0","0","0","0"}
-	users = append(users, newUser)	
-
-	//users := c.Init()
-	return c.RenderJson(users)
-}
-
-func (c APIUsers) Get(index int) revel.Result {
-	fmt.Println("Get(index string)")
-	//users := c.Init()
-	return c.RenderJson(users[index])
-}
-
-
-
-

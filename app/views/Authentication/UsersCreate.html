@@ -1,0 +1,133 @@
+{{set . "title" "Home"}}
+{{template "header.html" .}}
+
+<header class="hero-unit" style="background-color:#A9F16C">
+  <div class="container">
+    <div class="row">
+      <div class="hero-text">
+        <h1>Users login</h1>
+        <p></p>
+      </div>
+    </div>
+  </div>
+</header>
+<br>
+
+<form action="/api/users" method="POST" id="searchForm">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <form>
+          <div class="form-group">
+            <input type="name" class="form-control" placeholder="Enter username" name="username">
+          </div>
+          <div class="form-group">
+            <input type="name" class="form-control" placeholder="Firstname" name="firstname">
+          </div>
+          <div class="form-group">
+            <input type="name" class="form-control" placeholder="Lastname" name="lastname">
+          </div>
+          <div class="form-group">
+            <input type="name" class="form-control" placeholder="Email" name="email">
+          </div>
+          <div class="form-group">
+            <input type="name" class="form-control" placeholder="Id" name="id">
+          </div>
+          <div class="form-group">
+            <input type="name" class="form-control" placeholder="Twitteruid" name="twitteruid">
+          </div>
+          <div class="form-group">
+            <input type="name" class="form-control" placeholder="Facebookuid" name="facebookuid">
+          </div>
+          <div class="form-group">
+            <input type="name" class="form-control" placeholder="Password" name="password">
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <button type="submit" class="btn btn-default">Submit</button>
+      </div>
+    </div>
+
+    <br>
+    <div class="row">
+      <div class="col-md-6">
+        <table id='result' class="table"><table>  
+      </div>
+    </div>
+  </div>
+</form>
+<div class="container">
+  <div class="row">
+    <div class="span6">
+      {{template "flash.html" .}}
+    </div>
+  </div>
+</div>
+
+{{template "footer.html" .}}
+
+
+<script>
+// Attach a submit handler to the form
+$( "#searchForm" ).submit(function( event ) {
+ 
+  // Stop form from submitting normally
+  event.preventDefault();
+ 
+  // Get some values from elements on the page:
+  var $form = $( this ),
+    username = $form.find( "input[name='username']" ).val(),
+    firstname = $form.find( "input[name='firstname']" ).val(),
+    lastname = $form.find( "input[name='lastname']" ).val(),
+    email = $form.find( "input[name='email']" ).val(),
+    id = $form.find( "input[name='id']" ).val(),
+    twitteruid = $form.find( "input[name='twitteruid']" ).val(),
+    facebookuid = $form.find( "input[name='facebookuid']" ).val(),
+    password = $form.find( "input[name='password']" ).val(),
+    url = $form.attr( "action" );
+ 
+  // Send the data using post
+  var posting = $.post( url, { username: username, 
+                               firstname: firstname,
+                               lastname: lastname,
+                               email: email,
+                               id: id,
+                               twitteruid: twitteruid,
+                               facebookuid: facebookuid,
+                               password: password 
+                              } );
+ 
+  // Put the results in a div
+  posting.done(function( data ) {
+
+    var trHTML = '<thead><tr><th>' + 
+                  'username' + '</th><th>' + 
+                  'firstname'  + '</th><th>' + 
+                  'lastname' + '</th><th>' + 
+                  'email' + '</th><th>' + 
+                  'id' + '</th><th>' + 
+                  'twitteruid' + '</th><th>' + 
+                  'facebookuid' + '</th><th>' + 
+                  'token' + '</th></thead>'
+
+
+      trHTML += '<tbody><tr><td>' +
+                  data.username + '</td><td>' + 
+                  data.firstname + '</td><td>' + 
+                  data.lastname  + '</td><td>' + 
+                  data.email  + '</td><td>' + 
+                  data.id  + '</td><td>' + 
+                  data.twitteruid  + '</td><td>' + 
+                  data.facebookuid  + '</td><td>' + 
+                  data.token  + '<td></tr></tbody>';
+
+    $( "#result" ).empty().append(trHTML);
+
+  });
+});
+</script>
