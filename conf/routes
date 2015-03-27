@@ -23,6 +23,7 @@ POST	/api/login								Users.Login
 GET     /api/users/me                           Users.Me
 GET     /api/users                              Users.List
 POST    /api/users                              Users.Create
+PUT     /api/users/:id                          Users.Update
 DELETE  /api/users/:id                          Users.Delete
 GET 	/api/users/:id   						Users.Get
 GET		/api/createtestusers					Users.CreateUsers

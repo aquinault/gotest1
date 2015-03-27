@@ -5,7 +5,7 @@
   <div class="container">
     <div class="row">
       <div class="hero-text">
-        <h1>Users list</h1>
+        <h1>Users Management</h1>
         <p></p>
       </div>
     </div>
@@ -15,6 +15,16 @@
 
 <form>
   <div class="container">
+
+    <div class="row">
+      <div class="col-md-6">
+        <ul class="nav nav-tabs">
+          <li role="presentation" class="active"><a href="#">List</a></li>
+          <li role="presentation"><a href="/users/create">Create</a></li>
+        </ul>
+      </div>
+    </div>
+    <br>
     <!--div class="row">
       <div class="col-md-6">
         <form>
@@ -56,6 +66,8 @@
 
 <script>
 
+// DELETE
+//
 $('#result').on('click', '.btn-danger', function () {
     var currentRow = $(this).closest("tr");
     //do something with values in td's
@@ -91,8 +103,48 @@ $('#result').on('click', '.btn-danger', function () {
             console.log('user id=' + id + ' deleted');
         }
     });
+});
+
+// UPDATE
+//
+$('#result').on('click', '.btn-warning', function () {
+    var currentRow = $(this).closest("tr");
+    //do something with values in td's
+    var username = currentRow.find("td").eq(0).text();
+    var firstname = currentRow.find("td").eq(1).text();
+    var lastname = currentRow.find("td").eq(2).text();
+    var email = currentRow.find("td").eq(3).text();
+    var id = currentRow.find("td").eq(4).text();
+    var twitteruid = currentRow.find("td").eq(5).text();
+    var facebookuid = currentRow.find("td").eq(6).text();
+
+    var user = {
+      username : username,
+      firstname: firstname, 
+      lastname: lastname,
+      email: email,
+      id: id,
+      twitteruid: twitteruid,
+      facebookuid: facebookuid
+    }
+    //and so on
+    console.log(user);
+
+    var url = "/api/users/" + id
+
+    $.ajax({
+        url: url,
+        type: 'PUT',
+        data: JSON.stringify(user),
+        contentType: "application/json",
+        success: function(result) {
+            // Do something with the result
+            console.log('user id=' + id + ' deleted');
+        }
+    });
 
 });
+
 
 
 // Attach a submit handler to the form
@@ -112,21 +164,32 @@ $( "#searchForm" ).click(function() {
                   'firstname'  + '</th><th>' + 
                   'lastname' + '</th><th>' + 
                   'email' + '</th><th>' + 
-                  'id' + '</th><th>' + 
+                  'id&nbsp&nbsp&nbsp&nbsp&nbsp' + '</th><th>' + 
                   'twitteruid' + '</th><th>' + 
                   'facebookuid' + '</th><th>' + 
+                  'Update' + '</th><th>' +
                   'Delete' + '</th></thead>'
 
      $.each(data, function (i, item) {
         trHTML += '<tbody><tr><td class="nr">' +
-                    item.username + '</td><td>' + 
-                    item.firstname + '</td><td>' + 
-                    item.lastname  + '</td><td>' + 
-                    item.email  + '</td><td>' + 
-                    item.id  + '</td><td>' + 
-                    item.twitteruid  + '</td><td>' + 
-                    item.facebookuid  + '</td><td>' + 
-                    '<input type="button" class="btn btn-danger" value="Delete">' + '<td></tr></tbody>';
+                    '<span contenteditable>' + item.username + '</span>' +
+                    '</td><td>' + 
+                    '<span contenteditable>' + item.firstname + '</span>' +
+                    '</td><td>' + 
+                    '<span contenteditable>' + item.lastname + '</span>' +
+                    '</td><td>' + 
+                    '<span contenteditable>' + item.email + '</span>' +
+                    '</td><td>' + 
+                    '<span contenteditable>' + item.id + '</span>' +
+                    '</td><td>' + 
+                    '<span contenteditable>' + item.twitteruid + '</span>' +
+                    '</td><td>' + 
+                    '<span contenteditable>' + item.facebookuid + '</span>' +
+                    '</td><td>' + 
+                    '<input type="button" class="btn btn-warning" value="Update">' + 
+                    '</td><td>' + 
+                    '<input type="button" class="btn btn-danger" value="Delete">' + 
+                    '<td></tr></tbody>';
       });
 
       $("#result").empty().append(trHTML);

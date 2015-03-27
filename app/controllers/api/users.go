@@ -8,6 +8,8 @@ import (
  		"fmt"
  		"log"
         "net/http"
+        "encoding/json"
+        "io/ioutil"
         //"errors"
         //"encoding/json"
         "gopkg.in/mgo.v2"
@@ -18,6 +20,16 @@ type Users struct {
 	*revel.Controller
     mongo.Mongo
     jwt.Security
+}
+
+func (c Users) parseUserItem() (models.User, error) {
+    body, err := ioutil.ReadAll(c.Request.Body)
+    if err != nil {
+        log.Fatal(err)
+    }
+    useritem := models.User{}
+    err = json.Unmarshal([]byte(body), &useritem)
+    return useritem, err
 }
 
 func (c Users) Me() revel.Result {
@@ -155,6 +167,21 @@ func (c Users) Create(username string, firstname string, lastname string, email 
         log.Fatal(err)
     }
 
+    return c.RenderJson(user)
+}
+
+func (c Users) Update(id string) revel.Result {
+    user, err := c.parseUserItem()
+    if err != nil {
+        return c.RenderText("Unable to parse the UserItem from JSON.")
+    }
+
+    c1 := c.MongoDatabase.C("users")
+
+    err = c1.Update(bson.M{"id": id}, &user)
+    if err != nil {
+        log.Fatal(err)
+    }
     return c.RenderJson(user)
 }
 

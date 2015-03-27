@@ -5,7 +5,7 @@
   <div class="container">
     <div class="row">
       <div class="hero-text">
-        <h1>Users login</h1>
+        <h1>Users Management</h1>
         <p></p>
       </div>
     </div>
@@ -15,6 +15,17 @@
 
 <form action="/api/users" method="POST" id="searchForm">
   <div class="container">
+
+    <div class="row">
+      <div class="col-md-6">
+        <ul class="nav nav-tabs">
+          <li role="presentation"><a href="/users/list">List</a></li>
+          <li role="presentation" class="active"><a href="#">Create</a></li>
+        </ul>
+      </div>
+    </div>
+    <br>
+
     <div class="row">
       <div class="col-md-6">
         <form>
