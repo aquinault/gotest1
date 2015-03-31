@@ -31,9 +31,9 @@ func (c Authentication) UsersCreate() revel.Result {
 
 func (c Authentication) UsersList() revel.Result {
 	fmt.Println("UsersCreate()")
-	return c.Render()
+	pagetitle := "Users Management"
+	return c.Render(pagetitle)
 }
-
 
 
 func (c Authentication) Testtoken(token string) revel.Result {
