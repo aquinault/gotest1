@@ -17,7 +17,15 @@ type Authentication struct {
 
 func (c Authentication) Login() revel.Result {
 	fmt.Println("Login()")
-	return c.Render()
+	pagetitle := "Login"
+
+	var username string = ""
+	user, err := c.GetUser()
+	if err == nil {
+		username = user.Username
+	}
+
+	return c.Render(pagetitle, username)
 }
 
 func (c Authentication) Logout() revel.Result {

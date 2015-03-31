@@ -1,28 +1,18 @@
 {{set . "title" "Home"}}
 {{template "header.html" .}}
+{{template "navbar.html" .}}
 
-<header class="hero-unit" style="background-color:#A9F16C">
-  <div class="container">
-    <div class="row">
-      <div class="hero-text">
-        <h1>{{.greeting}}</h1>
-        <p></p>
-      </div>
-    </div>
-  </div>
-</header>
-<br>
-
-<form action="/api/login" method="POST" id="searchForm">
+<!--form action="/api/login" method="POST" id="searchForm"-->
+<form>
   <div class="container">
     <div class="row">
       <div class="col-md-6">
         <form>
           <div class="form-group">
-            <input type="name" class="form-control" id="exampleInputUsername1" placeholder="Enter username" name="username">
+            <input type="name" class="form-control" id="username1" placeholder="Username" name="username">
           </div>
           <div class="form-group">
-            <input type="password" class="form-control" id="exampleInputSignature1" placeholder="Signature" name="password">
+            <input type="password" class="form-control" id="password1" placeholder="Password" name="password">
           </div>
         </form>
       </div>
@@ -30,7 +20,7 @@
 
     <div class="row">
       <div class="col-md-6">
-        <button type="submit" class="btn btn-default">Submit</button>
+        <button type="button" class="btn btn-default" id="mySubmit">Submit</button>
       </div>
     </div>  
   </div>
@@ -45,3 +35,36 @@
 
 {{template "footer.html" .}}
 
+<script>
+
+// Touch Enter
+document.onkeydown=function(){
+    if(window.event.keyCode=='13'){
+        submitForm();
+    }
+}
+
+// Attach a submit handler to the form
+$( "#mySubmit" ).click(function() {
+  submitForm();
+});
+
+function submitForm() {
+  // Get some values from elements on the page:
+  var url = "/api/login"
+  var username = $("#username1").val();
+  var password = $("#password1").val();
+
+  $.ajax({
+        url: url,
+        type: 'POST',
+        data: { username: username, password: password},
+        //contentType: "application/json",
+        success: function(result) {
+            // Do something with the result
+            console.log(result);
+            window.location.replace("/");
+        }
+    });
+  }
+</script>
