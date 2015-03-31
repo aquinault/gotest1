@@ -12,6 +12,18 @@ type Security struct {
     *revel.Controller
 }
 
+// Recupere le token dans le cookie, decode le token et recupere le user
+func (c *Security) GetUser() (*models.User, error) {
+    tokenString := c.Session["Token"]
+    if tokenString == "" {
+        return nil, errors.New("unknown jwt token")
+
+    } else {
+        user, err := ParseLoginToken(tokenString, look)
+        return &user, err
+    }
+
+}
 
 // Verifie la validity du token dans le cookie et la session
 func (c *Security) CheckToken() (*models.User, error) {

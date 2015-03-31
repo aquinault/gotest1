@@ -8,6 +8,8 @@ GET     /                                       APIApp.Index
 
 # IHM
 GET 	/login 									Authentication.Login
+GET 	/logout 								Authentication.Logout
+
 
 GET 	/users/login							Authentication.UsersLogin
 GET 	/users/create							Authentication.UsersCreate

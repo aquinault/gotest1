@@ -12,11 +12,18 @@ const mySigningKey = "secret"
 
 type Authentication struct {
 	*revel.Controller
+	jwt.Security
 }
 
 func (c Authentication) Login() revel.Result {
 	fmt.Println("Login()")
 	return c.Render()
+}
+
+func (c Authentication) Logout() revel.Result {
+	fmt.Println("Logout()")
+	c.Session["Token"] = ""
+	return c.Redirect("/login")
 }
 
 func (c Authentication) UsersLogin() revel.Result {
@@ -26,13 +33,28 @@ func (c Authentication) UsersLogin() revel.Result {
 
 func (c Authentication) UsersCreate() revel.Result {
 	fmt.Println("UsersCreate()")
-	return c.Render()
+	pagetitle := "Users Management"
+
+	var username string = ""
+	user, err := c.GetUser()
+	if err == nil {
+		username = user.Username
+	}
+
+	return c.Render(pagetitle, username)
 }
 
 func (c Authentication) UsersList() revel.Result {
 	fmt.Println("UsersCreate()")
 	pagetitle := "Users Management"
-	return c.Render(pagetitle)
+
+	var username string = ""
+	user, err := c.GetUser()
+	if err == nil {
+		username = user.Username
+	}
+
+	return c.Render(pagetitle, username)
 }
 
 
