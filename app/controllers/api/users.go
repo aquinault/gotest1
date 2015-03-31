@@ -136,7 +136,9 @@ func (c Users) Login(username string, password string) revel.Result {
 
     signingKey, _ := revel.Config.String("app.signingKey")
 
-    tokenString := jwt.GenerateToken(username, signingKey)
+    //tokenString := jwt.GenerateToken(username, signingKey)
+    tokenString := jwt.GenerateToken(result, signingKey)
+
     fmt.Println("tokenString : ", tokenString)
 
     result2 := models.PublicUser{User: &result, Token: tokenString}

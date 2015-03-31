@@ -12,11 +12,12 @@ func Test(myToken string) string {
 	return string("parseLoginToken2")
 }
 
-func GenerateToken(username string, signature string) string {
+//func GenerateToken(username string, signature string) string {
+func GenerateToken(myuser models.User, signature string) string {
 	fmt.Println("GenerateToken()")
 
-	fmt.Println("username ", username)
-	fmt.Println("signature ", signature)
+	//fmt.Println("username ", username)
+	//fmt.Println("signature ", signature)
 	
 	u4, err := uuid.NewV4()
 	if err != nil {
@@ -25,14 +26,17 @@ func GenerateToken(username string, signature string) string {
 	}
 
 	fmt.Println("uuid ", u4)
-	user := models.User{ u4.String(), username, "0", "0", "0", "0", "0", "0"}
+	user := models.User{ u4.String(), myuser.Username, myuser.Firstname, myuser.Lastname, "0", "0", "0", "0"}
 
 
 	// Create the token
     token := jwt.New(jwt.SigningMethodHS256)
     token.Header["kind"] = "login"
     // Set some claims
-    token.Claims["user"] = user.Username
+    token.Claims["username"] = user.Username
+    token.Claims["firstname"] = user.Firstname
+    token.Claims["lastname"] = user.Lastname
+    token.Claims["email"] = user.Email
     token.Claims["id"] = user.Id
     token.Claims["foo"] = "bar"
     token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
@@ -63,7 +67,12 @@ func ParseLoginToken(myToken string, myLookupKey func(interface{}) (interface{},
 
 	if token.Valid {
 		fmt.Println("You look nice today")
-		return models.User{ token.Claims["id"].(string), token.Claims["user"].(string), "0", "0", "0", "0", "0", "0"}, nil
+		return models.User{ token.Claims["id"].(string), 
+							token.Claims["username"].(string), 
+							token.Claims["firstname"].(string), 
+							token.Claims["lastname"].(string), 
+							token.Claims["email"].(string), 
+							"0", "0", "0"}, nil
 
 
 	} else if ve, ok := err.(*jwt.ValidationError); ok {

@@ -84,8 +84,8 @@ func (c Authentication) Token(username string, signature string, token string) r
 	
 	if username != ""  && signature != "" {
 
-		tokenString := jwt.GenerateToken(username, signature)
-
+		//tokenString := jwt.GenerateToken(username, signature)
+		tokenString := "123"
 		fmt.Println("tokenString : ", tokenString)
 		return c.Render(greeting, username, signature, tokenString)	
 	}

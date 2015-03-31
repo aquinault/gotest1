@@ -25,7 +25,8 @@ func (c Auth) Token(username string, signature string) revel.Result {
 	fmt.Println("username ", username)
 	fmt.Println("signature ", signature)
 
-	return c.RenderText(jwt.GenerateToken(username, signature))
+	//return c.RenderText(jwt.GenerateToken(username, signature))
+	return c.Render()
 }
 
 
