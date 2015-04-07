@@ -1,3 +1,25 @@
+<style>
+.thumbnail {
+    position:relative;
+    overflow:hidden;
+}
+ 
+.caption {
+    position:absolute;
+    top:0;
+    right:0;
+    background:rgba(90, 90, 90, 0.75);
+    width:100%;
+    height:100%;
+    padding:2%;
+    display: none;
+    text-align: right;
+    color:#fff !important;
+    z-index:2;
+}
+</style>
+
+
 {{set . "title" "Home"}}
 {{template "header.html" .}}
 {{template "navbar.html" .}}
@@ -13,14 +35,41 @@
   </div>
 </header-->
 
+<form action="/api/upload" enctype="multipart/form-data" method="post">
+  <p>
+    Type some text (if you like):<br>
+    <input type="text" name="textline" size="30">
+  </p>
+  <p>
+    Please specify a file, or a set of files:<br>
+    <input type="file" name="filename" size="40">
+  </p>
+  <div>
+    <input type="submit" value="Send">
+  </div>
+</form>
+
 
 <div class="container">
     <div class="col-md-9">
     <div class="row">
-      <div class="col-md-4 col-sm-5">
-        <div class="thumbnail">
+      <div class="col-md-4 col-sm-5 col-xs-11">
+
+            <div class="thumbnail">
+                <div class="caption">                  
+                    <p class="">
+                        <a href="" class="label label-danger" rel="tooltip" title="Change">Change</a>                        
+                    </p>
+                </div>
+                <img src="http://bootdey.com/img/Content/User_for_snippets.png" alt="Profile Picture">
+            </div>
+
+
+        <!--div class="thumbnail">
           <img src="http://bootdey.com/img/Content/User_for_snippets.png" alt="Profile Picture">
         </div> <!-- /.thumbnail -->
+
+
         <br>
         <div class="list-group">  
           <a href="#" class="list-group-item">
@@ -49,11 +98,11 @@
       </div> <!-- /.col -->
 
 
-      <div class="col-md-8 col-sm-7">
+      <div class="col-md-8 col-sm-7 col-xs-7">
         <!--h2>Marktingk HGuoward</h2-->
-        <h2>{{.firstname}} {{.lastname}}</h2>
-        <h4>Visual, UI, UX Designer</h4>
-        <h4>{{.email}}</h4>
+        <h2>{{.user.Firstname}} {{.user.Lastname}}</h2>
+        <h5>{{.user.Email}}</h5>
+        <h5>Visual, UI, UX Designer</h5>
         <hr>
         <p>
           <a href="#" class="btn btn-success">Follow Marktingk</a>
@@ -84,3 +133,17 @@
 </div>
 
 {{template "footer.html" .}}
+
+
+<script>
+  $("[rel='tooltip']").tooltip();    
+
+  $('.thumbnail').hover(
+    function(){
+      $(this).find('.caption').slideDown(250); //.fadeIn(250)
+    },
+    function(){
+      $(this).find('.caption').slideUp(250); //.fadeOut(205)
+    }
+  ); 
+</script>

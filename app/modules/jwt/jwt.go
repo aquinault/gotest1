@@ -2,7 +2,7 @@ package jwt
 
 import (
 		"github.com/dgrijalva/jwt-go"
-		"github.com/nu7hatch/gouuid"
+		//"github.com/nu7hatch/gouuid"
  		"gotest1/app/models"
  		"fmt"
  		"time"
@@ -13,13 +13,10 @@ func Test(myToken string) string {
 }
 
 //func GenerateToken(username string, signature string) string {
-func GenerateToken(myuser models.User, signature string) string {
+func GenerateToken(user models.User, signature string) string {
 	fmt.Println("GenerateToken()")
 
-	//fmt.Println("username ", username)
-	//fmt.Println("signature ", signature)
-	
-	u4, err := uuid.NewV4()
+/*	u4, err := uuid.NewV4()
 	if err != nil {
 		fmt.Println("error:", err)
 		//return;
@@ -27,7 +24,7 @@ func GenerateToken(myuser models.User, signature string) string {
 
 	fmt.Println("uuid ", u4)
 	user := models.User{ u4.String(), myuser.Username, myuser.Firstname, myuser.Lastname, "0", "0", "0", "0"}
-
+*/
 
 	// Create the token
     token := jwt.New(jwt.SigningMethodHS256)

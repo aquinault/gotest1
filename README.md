@@ -6,6 +6,11 @@ curl.exe -F 'username=jdoo' -F 'password=password' localhost:9000/api2/login
 mongod --dbpath d:\code\mongo\data
 
 
+mongofiles -d test list
+mongofiles -d test put myfilename
+mongofiles -d test delete myfilename
+mongofiles -d test get myfilename
+
 ## Getting Started
 
 A high-productivity web framework for the [Go language](http://www.golang.org/).

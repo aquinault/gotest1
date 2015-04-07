@@ -4,7 +4,7 @@
 
 module:testrunner
 
-GET     /                                       APIApp.Index
+GET     /                                       App.Index
 
 # IHM
 GET 	/login 									Authentication.Login
@@ -14,6 +14,7 @@ GET 	/logout 								Authentication.Logout
 GET 	/users/login							Authentication.UsersLogin
 GET 	/users/create							Authentication.UsersCreate
 GET 	/users/list								Authentication.UsersList
+GET 	/users/me								Authentication.UsersMe
 
 GET     /token                        		    Authentication.Token
 POST    /token                        		    Authentication.Token
@@ -30,6 +31,7 @@ DELETE  /api/users/:id                          Users.Delete
 GET 	/api/users/:id   						Users.Get
 GET		/api/createtestusers					Users.CreateUsers
 
+POST    /api/upload                             Users.UploadfilePageHandler
 
 
 

@@ -17,15 +17,11 @@ type Authentication struct {
 
 func (c Authentication) Login() revel.Result {
 	fmt.Println("Login()")
+
+	user, _ := c.GetUser()
 	pagetitle := "Login"
 
-	var username string = ""
-	user, err := c.GetUser()
-	if err == nil {
-		username = user.Username
-	}
-
-	return c.Render(pagetitle, username)
+	return c.Render(pagetitle, user)
 }
 
 func (c Authentication) Logout() revel.Result {
@@ -41,30 +37,30 @@ func (c Authentication) UsersLogin() revel.Result {
 
 func (c Authentication) UsersCreate() revel.Result {
 	fmt.Println("UsersCreate()")
+
+	user, _ := c.GetUser()
 	pagetitle := "Users Management"
 
-	var username string = ""
-	user, err := c.GetUser()
-	if err == nil {
-		username = user.Username
-	}
-
-	return c.Render(pagetitle, username)
+	return c.Render(pagetitle, user)
 }
 
 func (c Authentication) UsersList() revel.Result {
 	fmt.Println("UsersCreate()")
+
+	user, _ := c.GetUser()
 	pagetitle := "Users Management"
 
-	var username string = ""
-	user, err := c.GetUser()
-	if err == nil {
-		username = user.Username
-	}
-
-	return c.Render(pagetitle, username)
+	return c.Render(pagetitle, user)
 }
 
+func (c Authentication) UsersMe() revel.Result {
+	fmt.Println("UsersMe()")
+
+	user, _ := c.GetUser()
+	pagetitle := "Me"
+
+	return c.Render(pagetitle, user)
+}
 
 func (c Authentication) Testtoken(token string) revel.Result {
 	fmt.Println("Testtoken() ", token)

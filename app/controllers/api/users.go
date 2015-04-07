@@ -14,12 +14,23 @@ import (
         //"encoding/json"
         "gopkg.in/mgo.v2"
         "gopkg.in/mgo.v2/bson"
+        "crypto/rand"
 )
 
 type Users struct {
 	*revel.Controller
     mongo.Mongo
     jwt.Security
+}
+
+func randString(n int) string {
+    const alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    var bytes = make([]byte, n)
+    rand.Read(bytes)
+    for i, b := range bytes {
+        bytes[i] = alphanum[b % byte(len(alphanum))]
+    }
+    return string(bytes)
 }
 
 func (c Users) parseUserItem() (models.User, error) {
@@ -30,6 +41,45 @@ func (c Users) parseUserItem() (models.User, error) {
     useritem := models.User{}
     err = json.Unmarshal([]byte(body), &useritem)
     return useritem, err
+}
+
+
+func (c Users) UploadfilePageHandler() revel.Result {
+
+    unique_filename := "myfilename" + randString(10)
+    fmt.Println("unique_filename ", unique_filename)
+    
+    file, _, err := c.Request.FormFile("filename")
+    if err != nil {
+        fmt.Println(err)
+    }
+
+    // Read the file into memory
+    data, err := ioutil.ReadAll(file)
+    // ... check err value for nil
+
+    // Specify the Mongodb database
+    my_db := c.MongoDatabase
+
+    // Create the file in the Mongodb Gridfs instance
+    my_file, err := my_db.GridFS("fs").Create(unique_filename)
+    // ... check err value for nil
+
+    // Write the file to the Mongodb Gridfs instance
+    n, err := my_file.Write(data)
+    // ... check err value for nil
+
+    // Close the file
+    err = my_file.Close()
+    // ... check err value for nil
+
+    // Write a log type message
+    fmt.Println("%d bytes written to the Mongodb instance\n", n)
+
+    //
+    //
+    
+    return c.RenderJson("OK")
 }
 
 func (c Users) Me() revel.Result {
