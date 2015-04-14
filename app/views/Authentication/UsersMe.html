@@ -35,7 +35,7 @@
   </div>
 </header-->
 
-<form action="/api/upload" enctype="multipart/form-data" method="post">
+<form action="/api/images" enctype="multipart/form-data" method="post">
   <p>
     Type some text (if you like):<br>
     <input type="text" name="textline" size="30">
@@ -102,6 +102,7 @@
         <!--h2>Marktingk HGuoward</h2-->
         <h2>{{.user.Firstname}} {{.user.Lastname}}</h2>
         <h5>{{.user.Email}}</h5>
+        <h5>Avatar: {{.user.Avatar}}</h5>
         <h5>Visual, UI, UX Designer</h5>
         <hr>
         <p>

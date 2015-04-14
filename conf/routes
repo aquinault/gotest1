@@ -30,8 +30,10 @@ PUT     /api/users/:id                          Users.Update
 DELETE  /api/users/:id                          Users.Delete
 GET 	/api/users/:id   						Users.Get
 GET		/api/createtestusers					Users.CreateUsers
+PUT     /api/users/:id/avatar/:fid              Users.UpdateAvatar
 
-POST    /api/upload                             Users.UploadfilePageHandler
+POST    /api/images                             Users.SaveImage
+GET     /api/images/:fid                       	Users.GetImage
 
 
 

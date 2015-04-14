@@ -79,6 +79,7 @@ $('#result').on('click', '.btn-danger', function () {
     var id = currentRow.find("td").eq(4).text();
     var twitteruid = currentRow.find("td").eq(5).text();
     var facebookuid = currentRow.find("td").eq(6).text();
+    var avatar = currentRow.find("td").eq(7).text();
 
     var user = {
       //username : username,
@@ -118,6 +119,7 @@ $('#result').on('click', '.btn-warning', function () {
     var id = currentRow.find("td").eq(4).text();
     var twitteruid = currentRow.find("td").eq(5).text();
     var facebookuid = currentRow.find("td").eq(6).text();
+    var avatar = currentRow.find("td").eq(7).text();
 
     var user = {
       username : username,
@@ -126,7 +128,8 @@ $('#result').on('click', '.btn-warning', function () {
       email: email,
       id: id,
       twitteruid: twitteruid,
-      facebookuid: facebookuid
+      facebookuid: facebookuid,
+      avatar: avatar
     }
     //and so on
     console.log(user);
@@ -168,6 +171,7 @@ $( "#searchForm" ).click(function() {
                   'id&nbsp&nbsp&nbsp&nbsp&nbsp' + '</th><th>' + 
                   'twitteruid' + '</th><th>' + 
                   'facebookuid' + '</th><th>' + 
+                  'avatar' + '</th><th>' + 
                   'Update' + '</th><th>' +
                   'Delete' + '</th></thead>'
 
@@ -186,6 +190,8 @@ $( "#searchForm" ).click(function() {
                     '<span contenteditable>' + item.twitteruid + '</span>' +
                     '</td><td>' + 
                     '<span contenteditable>' + item.facebookuid + '</span>' +
+                    '</td><td>' + 
+                    '<span contenteditable>' + item.avatar + '</span>' +
                     '</td><td>' + 
                     '<input type="button" class="btn btn-warning" value="Update">' + 
                     '</td><td>' + 

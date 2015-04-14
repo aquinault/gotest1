@@ -34,6 +34,7 @@ func GenerateToken(user models.User, signature string) string {
     token.Claims["firstname"] = user.Firstname
     token.Claims["lastname"] = user.Lastname
     token.Claims["email"] = user.Email
+    token.Claims["avatar"] = user.Avatar
     token.Claims["id"] = user.Id
     token.Claims["foo"] = "bar"
     token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
@@ -69,7 +70,8 @@ func ParseLoginToken(myToken string, myLookupKey func(interface{}) (interface{},
 							token.Claims["firstname"].(string), 
 							token.Claims["lastname"].(string), 
 							token.Claims["email"].(string), 
-							"0", "0", "0"}, nil
+							"0", "0", "0", 
+							token.Claims["avatar"].(string)}, nil
 
 
 	} else if ve, ok := err.(*jwt.ValidationError); ok {

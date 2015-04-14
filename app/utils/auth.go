@@ -25,7 +25,7 @@ func GenerateToken(username string, signature string) string {
 	}
 
 	fmt.Println("uuid ", u4)
-	user := models.User{ u4.String(), username, "0", "0", "0", "0", "0", "0"}
+	user := models.User{ u4.String(), username, "0", "0", "0", "0", "0", "0", ""}
 
 
 	// Create the token
@@ -63,7 +63,7 @@ func ParseLoginToken(myToken string, myLookupKey func(interface{}) (interface{},
 
 	if token.Valid {
 		fmt.Println("You look nice today")
-		return models.User{ token.Claims["id"].(string), token.Claims["user"].(string), "0", "0", "0", "0", "0", "0"}, nil
+		return models.User{ token.Claims["id"].(string), token.Claims["user"].(string), "0", "0", "0", "0", "0", "0", ""}, nil
 
 
 	} else if ve, ok := err.(*jwt.ValidationError); ok {
