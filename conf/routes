@@ -10,11 +10,15 @@ GET     /                                       App.Index
 GET 	/login 									Authentication.Login
 GET 	/logout 								Authentication.Logout
 
-
 GET 	/users/login							Authentication.UsersLogin
 GET 	/users/create							Authentication.UsersCreate
 GET 	/users/list								Authentication.UsersList
 GET 	/users/me								Authentication.UsersMe
+
+GET     /albums                                 Authentication.Albums
+# GET     /album/:id
+GET     /album                                  Authentication.Album
+
 
 GET     /token                        		    Authentication.Token
 POST    /token                        		    Authentication.Token
@@ -34,6 +38,9 @@ PUT     /api/users/:id/avatar/:fid              Users.UpdateAvatar
 
 POST    /api/images                             Users.SaveImage
 GET     /api/images/:fid                       	Users.GetImage
+
+POST    /api/albums                             Albums.SaveAlbum
+GET     /api/albums                        	    Albums.GetAlbums
 
 
 

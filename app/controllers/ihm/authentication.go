@@ -15,6 +15,20 @@ type Authentication struct {
 	jwt.Security
 }
 
+func (c Authentication) Albums() revel.Result {
+	fmt.Println("Albums")
+	user, _ := c.GetUser()
+	pagetitle := "Albums"
+	return c.Render(pagetitle, user)
+}
+
+func (c Authentication) Album() revel.Result {
+	fmt.Println("Album")
+	user, _ := c.GetUser()
+	pagetitle := "Album"
+	return c.Render(pagetitle, user)
+}
+
 func (c Authentication) Login() revel.Result {
 	fmt.Println("Login()")
 

@@ -79,14 +79,14 @@
         <!--h2>Marktingk HGuoward</h2-->
         <h2>{{.user.Firstname}} {{.user.Lastname}}</h2>
         <h5>{{.user.Email}}</h5>
-        <h5 id="userId">{{.user.Id}}</h5>
-        <h5 id="avatarId">{{.user.Avatar}}</h5>
+        <h5 id="userId" style="display:none">{{.user.Id}}</h5>
         <h5>Visual, UI, UX Designer</h5>
         <hr>
         <p>
-          <a href="#" class="btn btn-success">Follow Marktingk</a>
+            <a href="/albums" class="btn btn-success">Create Album</a>
+          <!--a href="#" class="btn btn-success">Follow Marktingk</a>
           &nbsp;&nbsp;
-          <a href="#" class="btn btn-info">Send Message</a>
+          <a href="#" class="btn btn-info">Send Message</a-->
         </p>
         <hr>
         <ul class="icons-list">
@@ -144,10 +144,9 @@
         processData: false,
         type: 'POST',
         success: function(data){
-            console.log('uload user image success')
+            console.log('upload user image success')
 
             var userId = $('#userId').text();
-            //var avatarId = $('#avatarId').text();
             var fid = data.fid1;
 
             // PUT     /api/users/:id/avatar/:fid              Users.UpdateAvatar

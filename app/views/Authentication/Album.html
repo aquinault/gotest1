@@ -1,0 +1,77 @@
+{{set . "title" "Home"}}
+{{template "header.html" .}}
+{{template "navbar.html" .}}
+
+<div class="container">
+    <div class="col-md-9">
+    <div class="row">
+      <div class="col-md-8 col-sm-7 col-xs-7">
+        <p>
+            <input type="file" class="btn btn-success" name="filename" size="40" id="filenameId">
+        </p>
+        <hr>
+
+        <br>
+        <hr>
+      </div>
+    </div>
+  </div>
+</div>                
+
+<div class="container">
+  <div class="row">
+    <div class="span6">
+      {{template "flash.html" .}}
+    </div>
+  </div>
+</div>
+
+{{template "footer.html" .}}
+
+
+<script>
+
+  // UPDATE
+  //
+  function send() {
+
+    var data = new FormData();
+    $.each($('#filenameId')[0].files, function(i, file) {
+        data.append('file-'+i, file);
+    });
+
+    $.ajax({
+        url: '/api/images',
+        data: data,
+        cache: false,
+        contentType: false,
+        processData: false,
+        type: 'POST',
+        success: function(data){
+            console.log('upload user image success')
+
+            var userId = $('#userId').text();
+            var fid = data.fid1;
+
+            // PUT     /api/users/:id/avatar/:fid              Users.UpdateAvatar
+            $.ajax({
+                url: '/api/albums/' + albumId + '/photo/' + fid,
+                data: data,
+                cache: false,
+                contentType: false,
+                processData: false,
+                type: 'PUT',
+                success: function(data2){
+                    console.log('update user profil success')
+                    location.reload();
+                }
+            });
+        }
+    })
+  }
+
+  $('#filenameId').on('change', function (event) {
+    send();    
+  });
+
+</script>
