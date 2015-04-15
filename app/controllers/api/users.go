@@ -108,7 +108,9 @@ func (c Users) SaveImage() revel.Result {
     my_db := c.MongoDatabase
 
     // Create the file in the Mongodb Gridfs instance
-    my_file, err := my_db.GridFS("fs").Create(filename)
+    my_file1, err := my_db.GridFS("fs").Create(filename)
+    //my_file2, err := my_db.GridFS("fs").Create(filename)
+    //my_file3, err := my_db.GridFS("fs").Create(filename)
     // ... check err value for nil
 
     // Set the Meta Data
@@ -119,18 +121,19 @@ func (c Users) SaveImage() revel.Result {
     // If you have an io.Reader already, you can give that to Decode 
     // without reading it into a []byte.
     original_image, _, err := image.Decode(bytes.NewReader(data))
-    fmt.Println("Etape1 --------------")
     if err != nil {
         fmt.Println(err)
         return c.RenderJson(map[string]string{"state": "ERROR",})      
     }
     
-    newImage := resize.Resize(160, 0, original_image, resize.Lanczos3)
-    fmt.Println("Etape2 --------------")
+    newImage1 := resize.Resize(100, 0, original_image, resize.Lanczos3)
+    //newImage2 := resize.Resize(200, 0, original_image, resize.Lanczos3)
+    //newImage3 := resize.Resize(500, 0, original_image, resize.Lanczos3)
 
     // Encode uses a Writer, use a Buffer if you need the raw []byte
-    err = jpeg.Encode(my_file, newImage, nil)
-    fmt.Println("Etape3 --------------")
+    err = jpeg.Encode(my_file1, newImage1, nil)
+    //err = jpeg.Encode(my_file2, newImage2, nil)
+    //err = jpeg.Encode(my_file3, newImage3, nil)
 
     fmt.Println(err)
     // check err
@@ -140,10 +143,14 @@ func (c Users) SaveImage() revel.Result {
     // ... check err value for nil
 
     //encode file id and serve
-    fileId := c.EncodeBase64Token(my_file.Id().(bson.ObjectId).Hex())
+    file1Id := c.EncodeBase64Token(my_file1.Id().(bson.ObjectId).Hex())
+    //file2Id := c.EncodeBase64Token(my_file2.Id().(bson.ObjectId).Hex())
+    //file3Id := c.EncodeBase64Token(my_file3.Id().(bson.ObjectId).Hex())
 
     // Close the file
-    err = my_file.Close()
+    err = my_file1.Close()
+    //err = my_file2.Close()
+    //err = my_file3.Close()
     // ... check err value for nil
 
     // Write a log type message
@@ -152,7 +159,9 @@ func (c Users) SaveImage() revel.Result {
     //   
     //return c.RenderJson(fileId)
     return c.RenderJson(map[string]string{
-            "fid": fileId, 
+            "fid1": file1Id, 
+            //"fid2": file2Id, 
+            //"fid3": file3Id, 
             //"size" : string(n), 
             "state": "SUCCESS", 
         })
