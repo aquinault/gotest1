@@ -19,7 +19,7 @@ import (
         "bytes"
         "image"
         "image/jpeg"
-        "image/png"
+        _ "image/png"
         "github.com/nfnt/resize"
 )
 
