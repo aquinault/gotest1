@@ -5,6 +5,7 @@ import (
         "gotest1/app/models"
  		"fmt"
         "errors"
+        "encoding/base64"
     )
 
 // Extension du controlleur
@@ -41,6 +42,21 @@ func (c *Security) CheckToken() (*models.User, error) {
     }
 
     return nil, errors.New("unknown jwt token")
+}
+
+/*Encode to base64*/
+func (c *Security) EncodeBase64Token(hexVal string) string {
+    token := base64.URLEncoding.EncodeToString([]byte(hexVal))
+    return token
+}
+
+/*Decode from base64*/
+func (c *Security) DecodeBase64Token(token string) string {
+    hexVal, err := base64.URLEncoding.DecodeString(token)
+    if err != nil {
+        return ""
+    }
+    return string(hexVal)
 }
 
 func look(kind interface{}) (interface{}, error) {

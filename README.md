@@ -11,6 +11,12 @@ mongofiles -d test put myfilename
 mongofiles -d test delete myfilename
 mongofiles -d test get myfilename
 
+// Delete all files
+db.fs.chunks.drop()
+db.fs.files.drop()
+
+
+
 ## Getting Started
 
 A high-productivity web framework for the [Go language](http://www.golang.org/).

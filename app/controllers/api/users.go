@@ -13,10 +13,13 @@ import (
         //"io"
         //"errors"
         //"encoding/json"
-        "encoding/base64"
         "gopkg.in/mgo.v2"
         "gopkg.in/mgo.v2/bson"
         "crypto/rand"
+        "bytes"
+        "image"
+        "image/jpeg"
+        "github.com/nfnt/resize"
 )
 
 type Users struct {
@@ -36,20 +39,20 @@ func randString(n int) string {
 }
 
 /*Encode to base64*/
-func encodeBase64Token(hexVal string) string {
+/*func encodeBase64Token(hexVal string) string {
     token := base64.URLEncoding.EncodeToString([]byte(hexVal))
     return token
 }
-
+*/
 /*Decode from base64*/
-func decodeToken(token string) string {
+/*func decodeBase64Token(token string) string {
     hexVal, err := base64.URLEncoding.DecodeString(token)
     if err != nil {
         return ""
     }
     return string(hexVal)
 }
-
+*/
 func (c Users) internalError() revel.Result {
     c.Response.Status = http.StatusUnauthorized       
     return c.RenderError(&revel.Error{
@@ -77,14 +80,24 @@ func (c Users) SaveImage() revel.Result {
     }
 
 
-    unique_filename := "myfilename" + randString(10)
+/*    unique_filename := "myfilename" + randString(10)
     fmt.Println("unique_filename ", unique_filename)
-    
-    file, _, err := c.Request.FormFile("filename")
+  */  
+    // 1 fichier file-0
+    file, handler, err := c.Request.FormFile("file-0")
+
     if err != nil {
-        fmt.Println(err)
+        fmt.Println("request.FormFile", err)
+
+        return c.RenderJson(map[string]string{
+            "state": "ERROR", 
+        })
+
     }
     defer file.Close();
+
+    // Get the original filename
+    filename := handler.Filename
 
     // Read the file into memory
     data, err := ioutil.ReadAll(file)
@@ -94,31 +107,52 @@ func (c Users) SaveImage() revel.Result {
     my_db := c.MongoDatabase
 
     // Create the file in the Mongodb Gridfs instance
-    my_file, err := my_db.GridFS("fs").Create(unique_filename)
+    my_file, err := my_db.GridFS("fs").Create(filename)
     // ... check err value for nil
 
     // Set the Meta Data
     //my_file.SetMeta(bson.M{"username": (*res).Username, "email": (*res).Email, "id": (*res).Id})
 
+
+    // Decoding gives you an Image.
+    // If you have an io.Reader already, you can give that to Decode 
+    // without reading it into a []byte.
+    original_image, _, err := image.Decode(bytes.NewReader(data))
+    fmt.Println("Etape1 --------------")
+    if err != nil {
+        fmt.Println(err)
+        return c.RenderJson(map[string]string{"state": "ERROR",})      
+    }
+    
+    newImage := resize.Resize(160, 0, original_image, resize.Lanczos3)
+    fmt.Println("Etape2 --------------")
+
+    // Encode uses a Writer, use a Buffer if you need the raw []byte
+    err = jpeg.Encode(my_file, newImage, nil)
+    fmt.Println("Etape3 --------------")
+
+    fmt.Println(err)
+    // check err
+
     // Write the file to the Mongodb Gridfs instance
-    n, err := my_file.Write(data)
+    //n, err := my_file.Write(data)
     // ... check err value for nil
 
     //encode file id and serve
-    fileId := encodeBase64Token(my_file.Id().(bson.ObjectId).Hex())
+    fileId := c.EncodeBase64Token(my_file.Id().(bson.ObjectId).Hex())
 
     // Close the file
     err = my_file.Close()
     // ... check err value for nil
 
     // Write a log type message
-    fmt.Println("%d bytes written to the Mongodb instance\n", n)
+    //fmt.Println("%d bytes written to the Mongodb instance\n", n)
 
     //   
     //return c.RenderJson(fileId)
     return c.RenderJson(map[string]string{
             "fid": fileId, 
-            "size" : string(n), 
+            //"size" : string(n), 
             "state": "SUCCESS", 
         })
 }
@@ -126,7 +160,7 @@ func (c Users) SaveImage() revel.Result {
 func (c Users) GetImage(fid string) revel.Result {
     fmt.Println("fid: ", fid)    
 
-    file_id := decodeToken(fid)
+    file_id := c.DecodeBase64Token(fid)
 
     // Verification du Token si invalide, retourne un 401
     //
@@ -230,7 +264,6 @@ func (c Users) Login(username string, password string) revel.Result {
     c1 := c.MongoDatabase.C("users")
 
     result := models.User{}
-    //err = c1.Find(bson.M{"username": "jdoo", "password" : "password"}).One(&result)
     err := c1.Find(bson.M{"username": username, "password" : password}).One(&result)
     if err != nil {
         log.Fatal(err)
@@ -278,20 +311,32 @@ func (c Users) Create(username string, firstname string, lastname string, email 
 
 
 func (c Users) UpdateAvatar(id string, fid string) revel.Result {
-    user, err := c.parseUserItem()
+    _, err := c.CheckToken();
     if err != nil {
-        return c.RenderText("Unable to parse the UserItem from JSON.")
+        c.internalError()
     }
-
-    user.Avatar = fid
 
     c1 := c.MongoDatabase.C("users")
 
-    err = c1.Update(bson.M{"id": id}, &user)
+    err = c1.Update(bson.M{"id": id}, bson.M{"$set": bson.M{"avatar": fid}})
     if err != nil {
         log.Fatal(err)
     }
-    return c.RenderJson(user)
+
+    // Update Token with the avatar id
+    result := models.User{}
+    err = c1.Find(bson.M{"id": id}).One(&result)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    signingKey, _ := revel.Config.String("app.signingKey")
+    tokenString := jwt.GenerateToken(result, signingKey)
+    result2 := models.PublicUser{User: &result, Token: tokenString}
+    c.Session["Token"] = string(tokenString)
+
+    //return c.RenderJson("OK")
+    return c.RenderJson(result2)
 }
 
 func (c Users) Update(id string) revel.Result {
