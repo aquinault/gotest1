@@ -11,7 +11,11 @@
 
         </p>
         <hr>
-
+          <div class="row">
+              <div class="col-md-6">
+                  <table id='result' class="table"></table>
+              </div>
+          </div>
         <br>
         <hr>
       </div>
@@ -32,23 +36,66 @@
 
 <script>
 
+   function updateAlbums(data) {
+       var trHTML = '<thead><tr><th>' +
+               'id' + '</th><th>' +
+               'name' + '</th><th>' +
+               'username'  + '</th><th>' +
+               'Delete' + '</th></thead>'
+
+       $.each(data, function (i, item) {
+           trHTML += '<tbody><tr><td class="nr">' +
+           '<span contenteditable>' + item.id + '</span>' +
+           '</td><td>' +
+           '<span contenteditable>' + item.name + '</span>' +
+           '</td><td>' +
+           '<span contenteditable>' + item.username + '</span>' +
+           '</td><td>' +
+           '<input type="button" class="btn btn-danger" value="Delete">' +
+           '<td></tr></tbody>';
+       });
+
+       $("#result").empty().append(trHTML);
+   }
+
+   function getAlbums() {
+       $.ajax({
+           url: '/api/albums/',
+           type: 'GET',
+           success: function(data){
+               console.log('get album success')
+               updateAlbums(data);
+
+           }
+       })
+   }
+
   // Create Album
   //
   $( "#albumId" ).click(function() {
 
       $.ajax({
           url: '/api/albums',
-          //data: data,
-          cache: false,
-          contentType: false,
-          processData: false,
           type: 'POST',
           success: function(data){
               console.log('new album success')
+              getAlbums();
+
+              $.ajax({
+              ///api/albums/:id/image/:fid
+                  url: '/api/albums/' + data.id + '/image/B',
+                  type: 'PUT',
+                  success: function(data2){
+                      console.log('add photo success')
+
+                  }
+              })
+
 
           }
       })
-
   });
 
+    // Init
+   getAlbums();
 </script>
