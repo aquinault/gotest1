@@ -45,7 +45,8 @@
 
        $.each(data, function (i, item) {
            trHTML += '<tbody><tr><td class="nr">' +
-           '<span contenteditable>' + item.id + '</span>' +
+          '<span>' + '<a href="/album/' + item.id + '">' + item.id + '</a>' + '</span>' +
+           //'<span contenteditable>' + item.id + '</span>' +
            '</td><td>' +
            '<span contenteditable>' + item.name + '</span>' +
            '</td><td>' +

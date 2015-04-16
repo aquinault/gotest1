@@ -35,7 +35,7 @@ func GenerateToken(user models.User, signature string) string {
     token.Claims["firstname"] = user.Firstname
     token.Claims["lastname"] = user.Lastname
     token.Claims["email"] = user.Email
-    token.Claims["avatar"] = user.Avatar
+    token.Claims["avatarid"] = user.AvatarId
     token.Claims["id"] = user.Id.Hex()
     token.Claims["foo"] = "bar"
     token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
@@ -71,7 +71,7 @@ func ParseLoginToken(myToken string, myLookupKey func(interface{}) (interface{},
 		fmt.Println(token)
 		fmt.Println("***************")
 
-		
+
 		return models.User{ 
 							bson.ObjectIdHex(token.Claims["id"].(string)),							
 							//token.Claims["id"].(string), 
@@ -80,7 +80,7 @@ func ParseLoginToken(myToken string, myLookupKey func(interface{}) (interface{},
 							token.Claims["lastname"].(string), 
 							token.Claims["email"].(string), 
 							"0", "0", "0", 
-							token.Claims["avatar"].(string)}, nil
+							token.Claims["avatarid"].(string)}, nil
 
 
 	} else if ve, ok := err.(*jwt.ValidationError); ok {

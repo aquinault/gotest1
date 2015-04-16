@@ -10,9 +10,25 @@
             <input type="file" class="btn btn-success" name="filename" size="40" id="filenameId">
         </p>
         <hr>
-
+          <div class="row">
+              <div class="col-md-6">
+                  <table id='result' class="table"></table>
+              </div>
+          </div>
         <br>
         <hr>
+
+          <div class="row">
+              <div class="col-md-6">
+                  <div class="container">                    
+                    <div class="row" id='result2'>              
+
+                    </div>
+                  </div>    
+              </div>    
+          </div>
+         <br>
+
       </div>
     </div>
   </div>
@@ -33,6 +49,88 @@
 
   var url = $.url(window.location.href);
   var albumId = url.segment(-1);
+
+
+   function updateImages(data) {
+       var trHTML = '<thead><tr><th>' +
+               'id' + '</th><th>' +
+               'name' + '</th><th>' +
+               'username'  + '</th><th>' +
+               'imageId'  + '</th><th>' +
+               'Delete' + '</th></thead>'
+
+       $.each(data.images, function (i, item) {
+           trHTML += '<tbody><tr><td class="nr">' +
+           '<span>' + '<a href="/album/' + data.id + '">' + data.id + '</a>' + '</span>' +
+           '</td><td>' +
+           '<span contenteditable>' + data.name + '</span>' +
+           '</td><td>' +
+           '<span contenteditable>' + data.username + '</span>' +
+           '</td><td>' +
+           '<span>' + '<a href="/api/images/' + item + '">' + item + '</a>' + '</span>' +
+           '</td><td>' +
+           '<input type="button" class="btn btn-danger" value="Delete">' +
+           '<td></tr></tbody>';
+       });
+
+       $("#result").empty().append(trHTML);
+   }
+
+   function updateImagesGallery(data) {
+       var trHTML = '';
+
+       $.each(data.images, function (i, item) {
+           trHTML += 
+            '<div class="col-md-2 col-sm-2 col-xs-4">' +
+            '<a href="/api/images/' + item + '" class="thumbnail">' +            
+            '<img src="/api/images/' + item + '" alt="image" style="width:50px;height:50px">' +
+            '</a>' +
+            '</div>';
+       });
+
+       $("#result2").empty().append(trHTML);
+   }
+
+
+
+
+
+   function getImages() {
+       $.ajax({
+           url: '/api/albums/' + albumId,
+           type: 'GET',
+           success: function(data){
+               console.log('get album success')
+               updateImages(data);
+               updateImagesGallery(data);
+           }
+       })
+   }
+
+
+  // DELETE ALBUM IMAGE
+  //
+  $('#result').on('click', '.btn-danger', function () {
+      var currentRow = $(this).closest("tr");
+      //do something with values in td's
+      var id = currentRow.find("td").eq(0).text();
+      var name = currentRow.find("td").eq(1).text();
+      var username = currentRow.find("td").eq(2).text();
+      var imageId = currentRow.find("td").eq(3).text();
+
+      var url = "/api/albums/" + id + "/image/" + imageId;
+
+      $.ajax({
+          url: url,
+          type: 'DELETE',
+          success: function(result) {
+              // Do something with the result
+              console.log('image id=' + imageId + ' deleted');
+              getImages();
+          }
+      });
+  });
+
 
 
   // UPDATE
@@ -59,14 +157,14 @@
 
             // PUT     /api/users/:id/avatar/:fid              Users.UpdateAvatar
             $.ajax({
-                url: '/api/albums/' + albumId + '/photo/' + fid,
+                url: '/api/albums/' + albumId + '/image/' + fid,
                 data: data,
                 cache: false,
                 contentType: false,
                 processData: false,
                 type: 'PUT',
                 success: function(data2){
-                    console.log('update user profil success')
+                    console.log('update album photo success')
                     location.reload();
                 }
             });
@@ -77,5 +175,9 @@
   $('#filenameId').on('change', function (event) {
     send();    
   });
+
+  // Init
+  getImages()
+
 
 </script>

@@ -16,7 +16,7 @@ type User struct {
   TwitterUid string `json:"twitteruid,omitempty"`
   FacebookUid string `json:"facebookuid,omitempty"`
   Password string `json:"password"`
-  Avatar string `json:"avatar,omitempty"`
+  AvatarId string `json:"avatarid,omitempty"`
 }
 
 type PublicUser struct {

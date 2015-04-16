@@ -328,7 +328,7 @@ func (c Users) UpdateAvatar(id string, fid string) revel.Result {
 
     c1 := c.MongoDatabase.C("users")
 
-    err = c1.Update(bson.M{"_id": bson.ObjectIdHex(id)}, bson.M{"$set": bson.M{"avatar": fid}})
+    err = c1.Update(bson.M{"_id": bson.ObjectIdHex(id)}, bson.M{"$set": bson.M{"avatarid": fid}})
     if err != nil {
         log.Fatal(err)
     }
