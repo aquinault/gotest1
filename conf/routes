@@ -16,8 +16,8 @@ GET 	/users/list								Authentication.UsersList
 GET 	/users/me								Authentication.UsersMe
 
 GET     /albums                                 Authentication.Albums
-# GET     /album/:id
-GET     /album                                  Authentication.Album
+GET     /album/:id							 	Authentication.Album
+#GET     /album                                  Authentication.Album
 
 
 GET     /token                        		    Authentication.Token
@@ -41,7 +41,8 @@ GET     /api/images/:fid                       	Users.GetImage
 
 POST    /api/albums                             Albums.SaveAlbum
 GET     /api/albums                        	    Albums.GetAlbums
-PUT     /api/albums/:id/image/:fid              Albums.UpdateAlbum
+DELETE  /api/albums/:id                         Albums.DeleteAlbum
+PUT     /api/albums/:id/image/:fid              Albums.UpdateAlbumImage
 
 
 

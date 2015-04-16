@@ -22,7 +22,7 @@ func (c Authentication) Albums() revel.Result {
 	return c.Render(pagetitle, user)
 }
 
-func (c Authentication) Album() revel.Result {
+func (c Authentication) Album(id string) revel.Result {
 	fmt.Println("Album")
 	user, _ := c.GetUser()
 	pagetitle := "Album"
@@ -72,6 +72,11 @@ func (c Authentication) UsersMe() revel.Result {
 
 	user, _ := c.GetUser()
 	pagetitle := "Me"
+
+
+	fmt.Println("/////////////////")	
+	fmt.Println(user)	
+	fmt.Println("/////////////////")	
 
 	return c.Render(pagetitle, user)
 }

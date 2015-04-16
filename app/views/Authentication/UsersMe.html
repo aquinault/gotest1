@@ -126,6 +126,20 @@
     }
   ); 
 
+  // ME
+  //
+  var me = undefined;
+  function getMe() {
+    $.ajax({
+      url: '/api/users/me',
+      type: 'GET',
+      success: function(data){
+        console.log('get my profil')
+        me = data;
+        //location.reload();
+      }
+    });
+  }
 
   // UPDATE
   //
@@ -146,7 +160,8 @@
         success: function(data){
             console.log('upload user image success')
 
-            var userId = $('#userId').text();
+            //var userId = $('#userId').text();
+            var userId = me.id;
             var fid = data.fid1;
 
             // PUT     /api/users/:id/avatar/:fid              Users.UpdateAvatar
@@ -169,5 +184,8 @@
   $('#filenameId').on('change', function (event) {
     send();    
   });
+
+  // Init
+  getMe();
 
 </script>

@@ -1,9 +1,14 @@
 package models
 
+import (
+  "gopkg.in/mgo.v2/bson"
+)
+
 type omit *struct {}
 
 type User struct {
-  Id string `json:"id"`
+  //Id string `json:"id"`
+  Id bson.ObjectId `json:"id" bson:"_id"`
   Username string `json:"username"`
   Firstname string `json:"firstname"`
   Lastname string `json:"lastname,omitempty"`

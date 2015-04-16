@@ -70,6 +70,30 @@
        })
    }
 
+  // DELETE ALBUM
+  //
+  $('#result').on('click', '.btn-danger', function () {
+      var currentRow = $(this).closest("tr");
+      //do something with values in td's
+      var id = currentRow.find("td").eq(0).text();
+      var name = currentRow.find("td").eq(1).text();
+      var username = currentRow.find("td").eq(2).text();
+
+      var url = "/api/albums/" + id
+
+      $.ajax({
+          url: url,
+          type: 'DELETE',
+          success: function(result) {
+              // Do something with the result
+              console.log('album id=' + id + ' deleted');
+              getAlbums();
+          }
+      });
+  });
+
+
+
   // Create Album
   //
   $( "#albumId" ).click(function() {

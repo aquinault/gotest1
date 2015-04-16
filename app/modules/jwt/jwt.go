@@ -6,6 +6,7 @@ import (
  		"gotest1/app/models"
  		"fmt"
  		"time"
+ 		"gopkg.in/mgo.v2/bson"
 )
 
 func Test(myToken string) string {
@@ -35,7 +36,7 @@ func GenerateToken(user models.User, signature string) string {
     token.Claims["lastname"] = user.Lastname
     token.Claims["email"] = user.Email
     token.Claims["avatar"] = user.Avatar
-    token.Claims["id"] = user.Id
+    token.Claims["id"] = user.Id.Hex()
     token.Claims["foo"] = "bar"
     token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
     // Sign and get the complete encoded token as a string
@@ -65,7 +66,15 @@ func ParseLoginToken(myToken string, myLookupKey func(interface{}) (interface{},
 
 	if token.Valid {
 		fmt.Println("You look nice today")
-		return models.User{ token.Claims["id"].(string), 
+
+		fmt.Println("***************")
+		fmt.Println(token)
+		fmt.Println("***************")
+
+		
+		return models.User{ 
+							bson.ObjectIdHex(token.Claims["id"].(string)),							
+							//token.Claims["id"].(string), 
 							token.Claims["username"].(string), 
 							token.Claims["firstname"].(string), 
 							token.Claims["lastname"].(string), 

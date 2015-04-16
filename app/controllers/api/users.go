@@ -297,7 +297,7 @@ func (c Users) Login(username string, password string) revel.Result {
     return c.RenderJson(result2)
 }
 
-func (c Users) Create(username string, firstname string, lastname string, email string, id string, twitteruid string, facebookuid string, password string) revel.Result {
+func (c Users) Create(username string, firstname string, lastname string, email string, id bson.ObjectId, twitteruid string, facebookuid string, password string) revel.Result {
     fmt.Println("username:", username)
     fmt.Println("firstname:", firstname)
     fmt.Println("lastname:", lastname)
@@ -328,14 +328,14 @@ func (c Users) UpdateAvatar(id string, fid string) revel.Result {
 
     c1 := c.MongoDatabase.C("users")
 
-    err = c1.Update(bson.M{"id": id}, bson.M{"$set": bson.M{"avatar": fid}})
+    err = c1.Update(bson.M{"_id": bson.ObjectIdHex(id)}, bson.M{"$set": bson.M{"avatar": fid}})
     if err != nil {
         log.Fatal(err)
     }
 
     // Update Token with the avatar id
     result := models.User{}
-    err = c1.Find(bson.M{"id": id}).One(&result)
+    err = c1.Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&result)
     if err != nil {
         log.Fatal(err)
     }
@@ -357,7 +357,7 @@ func (c Users) Update(id string) revel.Result {
 
     c1 := c.MongoDatabase.C("users")
 
-    err = c1.Update(bson.M{"id": id}, &user)
+    err = c1.Update(bson.M{"_id": bson.ObjectIdHex(id)}, &user)
     if err != nil {
         log.Fatal(err)
     }
@@ -370,7 +370,8 @@ func (c Users) Delete(id string) revel.Result {
 
     //user := models.User{id, username, firstname, lastname, email, twitteruid, facebookuid, password}
 
-    err := c1.Remove(bson.M{"id": id})
+    err := c1.Remove(bson.M{"_id": bson.ObjectIdHex(id)})
+    //err := c1.Remove(bson.M{"id": id})
     if err != nil {
         log.Fatal(err)
     }
@@ -381,9 +382,9 @@ func (c Users) Delete(id string) revel.Result {
 
 func (c Users) CreateUsers() revel.Result {
 	fmt.Println("CreateUsers()")
-	user1 := models.User{"1", "jdoo","John","Doo","john@doo","0","0","password",""}
-	user2 := models.User{"2", "mluis","Maria","Luis","maria@luis","0","0","password",""}
-	user3 := models.User{"3", "test1","firstn","lastn","test1@test1","0","0","password",""}
+	user1 := models.User{bson.NewObjectId(), "jdoo","John","Doo","john@doo","0","0","password",""}
+	user2 := models.User{bson.NewObjectId(), "mluis","Maria","Luis","maria@luis","0","0","password",""}
+	user3 := models.User{bson.NewObjectId(), "test1","firstn","lastn","test1@test1","0","0","password",""}
 
 	var users [3]models.User
 	users[0] = user1

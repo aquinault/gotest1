@@ -9,7 +9,7 @@ type Album struct {
 	Id bson.ObjectId `json:"id" bson:"_id"`
 	Name string `json:"name"`
   	Username string `json:"username"`
-	Chapters []string `json:"chapters"`
+	Images []string `json:"images"`
 }
 
 type PublicAlbum struct {

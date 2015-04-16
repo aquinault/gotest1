@@ -31,6 +31,10 @@
 
 <script>
 
+  var url = $.url(window.location.href);
+  var albumId = url.segment(-1);
+
+
   // UPDATE
   //
   function send() {

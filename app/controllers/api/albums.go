@@ -41,7 +41,7 @@ func (c Albums) parseUserItem() (models.User, error) {
     return useritem, err
 }
 
-func (c Albums) UpdateAlbum(id string, fid string) revel.Result {
+func (c Albums) UpdateAlbumImage(id string, fid string) revel.Result {
 	// Verification du Token si invalide, retourne un 401
 	//
 	user, err := c.CheckToken();
@@ -51,13 +51,26 @@ func (c Albums) UpdateAlbum(id string, fid string) revel.Result {
 
 	c1 := c.MongoDatabase.C("albums")
 
-	err = c1.Update(bson.M{"_id": bson.ObjectIdHex(id)}, bson.M{"$push": bson.M{"chapters": fid}})
+	err = c1.Update(bson.M{"_id": bson.ObjectIdHex(id)}, bson.M{"$push": bson.M{"images": fid}})
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	return c.RenderJson(user)
 }
+
+func (c Albums) DeleteAlbum(id string) revel.Result {
+    //fmt.Println("id:", id)
+    c1 := c.MongoDatabase.C("albums")
+
+    err := c1.Remove(bson.M{"_id": bson.ObjectIdHex(id)})
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    return c.RenderJson(bson.M{"id": id})
+}
+
 
 func (c Albums) SaveAlbum() revel.Result {
     // Verification du Token si invalide, retourne un 401
