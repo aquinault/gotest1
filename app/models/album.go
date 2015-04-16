@@ -8,7 +8,7 @@ import (
 type Album struct {
 	Id bson.ObjectId `json:"id" bson:"_id"`
 	Name string `json:"name"`
-  	Username string `json:"username"`
+  	UserId string `json:"userid"`
 	Images []string `json:"images"`
 }
 

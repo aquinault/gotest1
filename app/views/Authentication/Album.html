@@ -54,18 +54,12 @@
    function updateImages(data) {
        var trHTML = '<thead><tr><th>' +
                'id' + '</th><th>' +
-               'name' + '</th><th>' +
-               'username'  + '</th><th>' +
                'imageId'  + '</th><th>' +
                'Delete' + '</th></thead>'
 
        $.each(data.images, function (i, item) {
            trHTML += '<tbody><tr><td class="nr">' +
            '<span>' + '<a href="/album/' + data.id + '">' + data.id + '</a>' + '</span>' +
-           '</td><td>' +
-           '<span contenteditable>' + data.name + '</span>' +
-           '</td><td>' +
-           '<span contenteditable>' + data.username + '</span>' +
            '</td><td>' +
            '<span>' + '<a href="/api/images/' + item + '">' + item + '</a>' + '</span>' +
            '</td><td>' +
@@ -78,13 +72,35 @@
 
    function updateImagesGallery(data) {
        var trHTML = '';
+        trHTML += '<p> albumName:'+data.name +'</p>';
+        trHTML += '<p> albumId:'+data.id +'</p>';
+        trHTML += '<p> userId:'+data.userid +'</p>';
 
        $.each(data.images, function (i, item) {
            trHTML += 
-            '<div class="col-md-2 col-sm-2 col-xs-4">' +
-            '<a href="/api/images/' + item + '" class="thumbnail">' +            
-            '<img src="/api/images/' + item + '" alt="image" style="width:50px;height:50px">' +
-            '</a>' +
+            '<div class="col-sm-12 col-xs-12 col-md-4 col-lg-4">' +
+            '<div class="thumbnail">' +
+            //'<a href="/api/images/' + item + '" class="thumbnail">' +            
+            //'<img src="/api/images/' + item + '" alt="image" style="max-height: 100px; max-width: 100px">' +
+            '<img src="/api/images/' + item + '" alt="image" style="width: 100%">' +
+            //'</a>' +
+            '<div class="caption">' +
+            '<p>' +
+            '<div class="btn-group">' +
+              '<button type="button" class="btn btn-default btn-xs" aria-label="Left Align">'+
+              '<span class="glyphicon glyphicon-heart" aria-hidden="true">'+
+              '</span>'+
+              '</button>'+
+              '<button type="button" class="btn btn-default btn-xs" aria-label="Left Align">'+
+              '<span class="glyphicon glyphicon-eye-open" aria-hidden="true">'+
+              '</span>'+
+              '</button>'+
+            '</div>' +
+           
+            '</p>' +
+            '</div>' +
+            '</div>' +
+
             '</div>';
        });
 
@@ -92,8 +108,16 @@
    }
 
 
-
-
+/*
+< div class="thumbnail">
+      <img src="..." alt="...">
+      <div class="caption">
+        <h3>Thumbnail label</h3>
+        <p>...</p>
+        <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
+      </div>
+    </div>
+*/
 
    function getImages() {
        $.ajax({
@@ -114,9 +138,7 @@
       var currentRow = $(this).closest("tr");
       //do something with values in td's
       var id = currentRow.find("td").eq(0).text();
-      var name = currentRow.find("td").eq(1).text();
-      var username = currentRow.find("td").eq(2).text();
-      var imageId = currentRow.find("td").eq(3).text();
+      var imageId = currentRow.find("td").eq(1).text();
 
       var url = "/api/albums/" + id + "/image/" + imageId;
 
@@ -124,9 +146,17 @@
           url: url,
           type: 'DELETE',
           success: function(result) {
-              // Do something with the result
-              console.log('image id=' + imageId + ' deleted');
-              getImages();
+              // Do something with the result              
+              $.ajax({
+                  url: '/api/images/' + imageId,
+                  type: 'DELETE',
+                  success: function(result2) {
+                    console.log('image id=' + imageId + ' deleted');
+                    getImages();
+                  }
+              });
+
+
           }
       });
   });

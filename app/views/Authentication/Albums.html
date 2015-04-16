@@ -40,7 +40,7 @@
        var trHTML = '<thead><tr><th>' +
                'id' + '</th><th>' +
                'name' + '</th><th>' +
-               'username'  + '</th><th>' +
+               'userId'  + '</th><th>' +
                'Delete' + '</th></thead>'
 
        $.each(data, function (i, item) {
@@ -50,7 +50,7 @@
            '</td><td>' +
            '<span contenteditable>' + item.name + '</span>' +
            '</td><td>' +
-           '<span contenteditable>' + item.username + '</span>' +
+           '<span contenteditable>' + item.userid + '</span>' +
            '</td><td>' +
            '<input type="button" class="btn btn-danger" value="Delete">' +
            '<td></tr></tbody>';

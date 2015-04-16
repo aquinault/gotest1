@@ -167,6 +167,28 @@ func (c Users) SaveImage() revel.Result {
         })
 }
 
+func (c Users) DeleteImage(fid string) revel.Result {
+    fmt.Println("fid: ", fid)    
+
+    file_id := c.DecodeBase64Token(fid)
+
+    // Verification du Token si invalide, retourne un 401
+    //
+    _, err := c.CheckToken();
+    if err != nil {
+        c.internalError()
+    }
+
+    // Specify the Mongodb database
+    my_db := c.MongoDatabase
+
+    //my_file, _ := my_db.GridFS("fs").Open(name)
+    _ = my_db.GridFS("fs").RemoveId(bson.ObjectIdHex(file_id))
+
+    return c.RenderText("Remove OK")
+}
+
+
 func (c Users) GetImage(fid string) revel.Result {
     fmt.Println("fid: ", fid)    
 

@@ -114,7 +114,7 @@ func (c Albums) SaveAlbum() revel.Result {
 
 	c1 := c.MongoDatabase.C("albums")
 
-	album := models.Album{bson.NewObjectId(), "album1", user.Username, []string{}}
+	album := models.Album{bson.NewObjectId(), "album1", user.Id.Hex(), []string{}}
 
 	err = c1.Insert(&album)
 	if err != nil {

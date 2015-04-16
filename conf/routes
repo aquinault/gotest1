@@ -6,7 +6,7 @@ module:testrunner
 
 GET     /                                       App.Index
 
-# IHM
+#---------------------- IHM ------------------------------------------
 GET 	/login 									Authentication.Login
 GET 	/logout 								Authentication.Logout
 
@@ -17,15 +17,13 @@ GET 	/users/me								Authentication.UsersMe
 
 GET     /albums                                 Authentication.Albums
 GET     /album/:id							 	Authentication.Album
-#GET     /album                                  Authentication.Album
-
 
 GET     /token                        		    Authentication.Token
 POST    /token                        		    Authentication.Token
 GET     /testtoken                   	      	Authentication.Testtoken
 POST    /testtoken                      	   	Authentication.Testtoken
 
-# API
+#---------------------- API USERS ------------------------------------------
 POST	/api/login								Users.Login
 GET     /api/users/me                           Users.Me
 GET     /api/users                              Users.List
@@ -36,20 +34,22 @@ GET 	/api/users/:id   						Users.Get
 GET		/api/createtestusers					Users.CreateUsers
 PUT     /api/users/:id/avatar/:fid              Users.UpdateAvatar
 
+#---------------------- API IMAGES ------------------------------------------
 POST    /api/images                             Users.SaveImage
 GET     /api/images/:fid                       	Users.GetImage
+DELETE  /api/images/:fid                       	Users.DeleteImage
 
+#---------------------- API ALBUMS ------------------------------------------
 POST    /api/albums                             Albums.SaveAlbum
 GET     /api/albums                        	    Albums.GetAlbums
-
 GET  	/api/albums/:id                         Albums.GetAlbumImages
 DELETE  /api/albums/:id                         Albums.DeleteAlbum
-
 PUT     /api/albums/:id/image/:fid              Albums.UpdateAlbumImage
 DELETE  /api/albums/:id/image/:fid              Albums.DeleteAlbumImage
 
 
 
+#---------------------- API OLD STUFF ------------------------------------------
 #GET     /api/auth/token                         Auth.Token
 #POST    /api/auth/token                         Auth.Token
 #GET     /api/auth/testtoken/                    Auth.TestToken
