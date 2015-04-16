@@ -42,6 +42,7 @@ DELETE  /api/images/:fid                       	Users.DeleteImage
 #---------------------- API ALBUMS ------------------------------------------
 POST    /api/albums                             Albums.SaveAlbum
 GET     /api/albums                        	    Albums.GetAlbums
+PUT     /api/albums/:id                         Albums.UpdateAlbum
 GET  	/api/albums/:id                         Albums.GetAlbumImages
 DELETE  /api/albums/:id                         Albums.DeleteAlbum
 PUT     /api/albums/:id/image/:fid              Albums.UpdateAlbumImage

@@ -67,10 +67,6 @@ func ParseLoginToken(myToken string, myLookupKey func(interface{}) (interface{},
 	if token.Valid {
 		fmt.Println("You look nice today")
 
-		fmt.Println("***************")
-		fmt.Println(token)
-		fmt.Println("***************")
-
 
 		return models.User{ 
 							bson.ObjectIdHex(token.Claims["id"].(string)),							

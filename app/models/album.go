@@ -6,12 +6,14 @@ import (
 //type omit *struct {}
 
 type Album struct {
-	Id bson.ObjectId `json:"id" bson:"_id"`
-	Name string `json:"name"`
-  	UserId string `json:"userid"`
-	Images []string `json:"images"`
+	Id bson.ObjectId `json:"id,omitempty" bson:"_id"`
+	Name string `json:"name,omitempty"`
+  	UserId string `json:"userid,omitempty"`
+	Images []string `json:"images,omitempty"`
 }
 
 type PublicAlbum struct {
   *Album
+  StatusType string `json:"statustype,omitempty"`
+  StatusMsg string `json:"statusmsg,omitempty"`
 }
