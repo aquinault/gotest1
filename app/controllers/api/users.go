@@ -10,17 +10,8 @@ import (
         "net/http"
         "encoding/json"
         "io/ioutil"
-        //"io"
-        //"errors"
-        //"encoding/json"
         "gopkg.in/mgo.v2"
         "gopkg.in/mgo.v2/bson"
-        "crypto/rand"
-        "bytes"
-        "image"
-        "image/jpeg"
-        _ "image/png"
-        "github.com/nfnt/resize"
 )
 
 type Users struct {
@@ -29,31 +20,6 @@ type Users struct {
     jwt.Security
 }
 
-func randString(n int) string {
-    const alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-    var bytes = make([]byte, n)
-    rand.Read(bytes)
-    for i, b := range bytes {
-        bytes[i] = alphanum[b % byte(len(alphanum))]
-    }
-    return string(bytes)
-}
-
-/*Encode to base64*/
-/*func encodeBase64Token(hexVal string) string {
-    token := base64.URLEncoding.EncodeToString([]byte(hexVal))
-    return token
-}
-*/
-/*Decode from base64*/
-/*func decodeBase64Token(token string) string {
-    hexVal, err := base64.URLEncoding.DecodeString(token)
-    if err != nil {
-        return ""
-    }
-    return string(hexVal)
-}
-*/
 func (c Users) internalError() revel.Result {
     c.Response.Status = http.StatusUnauthorized       
     return c.RenderError(&revel.Error{
@@ -70,152 +36,6 @@ func (c Users) parseUserItem() (models.User, error) {
     useritem := models.User{}
     err = json.Unmarshal([]byte(body), &useritem)
     return useritem, err
-}
-
-func (c Users) SaveImage() revel.Result {
-    // Verification du Token si invalide, retourne un 401
-    //
-    _, err := c.CheckToken();
-    if err != nil {
-        c.internalError()
-    }
-
-
-/*    unique_filename := "myfilename" + randString(10)
-    fmt.Println("unique_filename ", unique_filename)
-  */  
-    // 1 fichier file-0
-    file, handler, err := c.Request.FormFile("file-0")
-
-    if err != nil {
-        fmt.Println("request.FormFile", err)
-
-        return c.RenderJson(map[string]string{
-            "state": "ERROR", 
-        })
-
-    }
-    defer file.Close();
-
-    // Get the original filename
-    filename := handler.Filename
-
-    // Read the file into memory
-    data, err := ioutil.ReadAll(file)
-    // ... check err value for nil
-
-    // Specify the Mongodb database
-    my_db := c.MongoDatabase
-
-    // Create the file in the Mongodb Gridfs instance
-    my_file1, err := my_db.GridFS("fs").Create(filename)
-    //my_file2, err := my_db.GridFS("fs").Create(filename)
-    //my_file3, err := my_db.GridFS("fs").Create(filename)
-    // ... check err value for nil
-
-    // Set the Meta Data
-    //my_file.SetMeta(bson.M{"username": (*res).Username, "email": (*res).Email, "id": (*res).Id})
-
-
-    // Decoding gives you an Image.
-    // If you have an io.Reader already, you can give that to Decode 
-    // without reading it into a []byte.
-    original_image, _, err := image.Decode(bytes.NewReader(data))
-    if err != nil {
-        fmt.Println(err)
-        return c.RenderJson(map[string]string{"state": "ERROR",})      
-    }
-    
-    newImage1 := resize.Resize(100, 0, original_image, resize.Lanczos3)
-    //newImage2 := resize.Resize(200, 0, original_image, resize.Lanczos3)
-    //newImage3 := resize.Resize(500, 0, original_image, resize.Lanczos3)
-
-    // Encode uses a Writer, use a Buffer if you need the raw []byte
-    err = jpeg.Encode(my_file1, newImage1, nil)
-    //err = jpeg.Encode(my_file2, newImage2, nil)
-    //err = jpeg.Encode(my_file3, newImage3, nil)
-
-    fmt.Println(err)
-    // check err
-
-    // Write the file to the Mongodb Gridfs instance
-    //n, err := my_file.Write(data)
-    // ... check err value for nil
-
-    //encode file id and serve
-    file1Id := c.EncodeBase64Token(my_file1.Id().(bson.ObjectId).Hex())
-    //file2Id := c.EncodeBase64Token(my_file2.Id().(bson.ObjectId).Hex())
-    //file3Id := c.EncodeBase64Token(my_file3.Id().(bson.ObjectId).Hex())
-
-    // Close the file
-    err = my_file1.Close()
-    //err = my_file2.Close()
-    //err = my_file3.Close()
-    // ... check err value for nil
-
-    // Write a log type message
-    //fmt.Println("%d bytes written to the Mongodb instance\n", n)
-
-    //   
-    //return c.RenderJson(fileId)
-    return c.RenderJson(map[string]string{
-            "fid1": file1Id, 
-            //"fid2": file2Id, 
-            //"fid3": file3Id, 
-            //"size" : string(n), 
-            "state": "SUCCESS", 
-        })
-}
-
-func (c Users) DeleteImage(fid string) revel.Result {
-    fmt.Println("fid: ", fid)    
-
-    file_id := c.DecodeBase64Token(fid)
-
-    // Verification du Token si invalide, retourne un 401
-    //
-    _, err := c.CheckToken();
-    if err != nil {
-        c.internalError()
-    }
-
-    // Specify the Mongodb database
-    my_db := c.MongoDatabase
-
-    //my_file, _ := my_db.GridFS("fs").Open(name)
-    _ = my_db.GridFS("fs").RemoveId(bson.ObjectIdHex(file_id))
-
-    return c.RenderText("Remove OK")
-}
-
-
-func (c Users) GetImage(fid string) revel.Result {
-    fmt.Println("fid: ", fid)    
-
-    file_id := c.DecodeBase64Token(fid)
-
-    // Verification du Token si invalide, retourne un 401
-    //
-    _, err := c.CheckToken();
-    if err != nil {
-        c.internalError()
-    }
-
-    // Specify the Mongodb database
-    my_db := c.MongoDatabase
-
-    //my_file, _ := my_db.GridFS("fs").Open(name)
-    my_file, _ := my_db.GridFS("fs").OpenId(bson.ObjectIdHex(file_id))
-
-    b := make([]byte, my_file.Size())
-    my_file.Read(b)
-    //fmt.Println(string(b))
-    _ = my_file.Close()
-
-    c.Response.Status = http.StatusOK
-    c.Response.ContentType = "image/png"
-
-    return c.RenderText(string(b))
 }
 
 func (c Users) Me() revel.Result {

@@ -6,6 +6,7 @@ import (
  		"fmt"
         "errors"
         "encoding/base64"
+        //"crypto/rand"
     )
 
 // Extension du controlleur
@@ -58,7 +59,17 @@ func (c *Security) DecodeBase64Token(token string) string {
     }
     return string(hexVal)
 }
-
+/*
+func (c *Security) randString(n int) string {
+    const alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    var bytes = make([]byte, n)
+    rand.Read(bytes)
+    for i, b := range bytes {
+        bytes[i] = alphanum[b % byte(len(alphanum))]
+    }
+    return string(bytes)
+}
+*/
 func look(kind interface{}) (interface{}, error) {
     signingKey, _ := revel.Config.String("app.signingKey")
     if str, ok := kind.(string); ok {

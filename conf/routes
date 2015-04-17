@@ -35,9 +35,9 @@ GET		/api/createtestusers					Users.CreateUsers
 PUT     /api/users/:id/avatar/:fid              Users.UpdateAvatar
 
 #---------------------- API IMAGES ------------------------------------------
-POST    /api/images                             Users.SaveImage
-GET     /api/images/:fid                       	Users.GetImage
-DELETE  /api/images/:fid                       	Users.DeleteImage
+POST    /api/images                             Images.SaveImage
+GET     /api/images/:fid                       	Images.GetImage
+DELETE  /api/images/:fid                       	Images.DeleteImage
 
 #---------------------- API ALBUMS ------------------------------------------
 POST    /api/albums                             Albums.SaveAlbum
