@@ -12,8 +12,21 @@ type Album struct {
 	Images []string `json:"images,omitempty"`
 }
 
+type Code struct {
+  Type string `json:"type,omitempty"`
+  Msg string `json:"msg,omitempty"`
+}
+
+type PublicError struct {
+	Code Code `json:"code,omitempty"`
+}
+
 type PublicAlbum struct {
-  *Album
-  StatusType string `json:"statustype,omitempty"`
-  StatusMsg string `json:"statusmsg,omitempty"`
+  Data *Album `json:"data,omitempty"`
+  Code Code `json:"code,omitempty"`
+}
+
+type PublicAlbums struct {
+  Data *[]Album `json:"data,omitempty"`
+  Code Code `json:"code,omitempty"`
 }

@@ -125,8 +125,8 @@
            type: 'GET',
            success: function(data){
                console.log('get album success')
-               updateImages(data);
-               updateImagesGallery(data);
+               updateImages(data.data);
+               updateImagesGallery(data.data);
            }
        })
    }
