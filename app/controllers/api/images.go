@@ -4,6 +4,7 @@ import (
 		"github.com/revel/revel"
         "gotest1/app/modules/mongo"
         "gotest1/app/modules/jwt"
+        "gotest1/app/models"
  		"fmt"
         "net/http"
         "io/ioutil"
@@ -21,17 +22,14 @@ type Images struct {
     mongo.Mongo
     jwt.Security
 }
-/*
-func randString(n int) string {
-    const alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-    var bytes = make([]byte, n)
-    rand.Read(bytes)
-    for i, b := range bytes {
-        bytes[i] = alphanum[b % byte(len(alphanum))]
-    }
-    return string(bytes)
+
+func (c Images) RenderPublicErrorJson(statusType string, statusMsg string) revel.Result {    
+    result2 := models.PublicError{}
+    result2.Code.Type = statusType
+    result2.Code.Msg = statusMsg
+    return c.RenderJson(result2)
 }
-*/
+
 func (c Images) internalError() revel.Result {
     c.Response.Status = http.StatusUnauthorized       
     return c.RenderError(&revel.Error{
@@ -39,8 +37,6 @@ func (c Images) internalError() revel.Result {
         Description: "Token not valid for url " + string(c.Request.RequestURI ),
     })
 }
-
-
 
 func (c Images) SaveImage() revel.Result {
     // Verification du Token si invalide, retourne un 401
@@ -88,8 +84,7 @@ func (c Images) SaveImage() revel.Result {
     // without reading it into a []byte.
     original_image, _, err := image.Decode(bytes.NewReader(data))
     if err != nil {
-        fmt.Println(err)
-        return c.RenderJson(map[string]string{"state": "ERROR",})      
+        return c.RenderPublicErrorJson("KO", "Save Image: " + err.Error()) 
     }
     
     newImage1 := resize.Resize(100, 0, original_image, resize.Lanczos3)
@@ -98,10 +93,13 @@ func (c Images) SaveImage() revel.Result {
 
     // Encode uses a Writer, use a Buffer if you need the raw []byte
     err = jpeg.Encode(my_file1, newImage1, nil)
+    if err != nil {
+        return c.RenderPublicErrorJson("KO", "Save Image: " + err.Error()) 
+    }
     //err = jpeg.Encode(my_file2, newImage2, nil)
     //err = jpeg.Encode(my_file3, newImage3, nil)
 
-    fmt.Println(err)
+//    fmt.Println(err)
     // check err
 
     // Write the file to the Mongodb Gridfs instance
