@@ -20,6 +20,22 @@ type Users struct {
     jwt.Security
 }
 
+func (c Users) RenderPublicErrorJson(statusType string, statusMsg string) revel.Result {    
+    result2 := models.PublicError{}
+    result2.Code.Type = statusType
+    result2.Code.Msg = statusMsg
+    return c.RenderJson(result2)
+}
+
+func (c Users) RenderPublicUser2Json(user *models.User, statusType string, statusMsg string) revel.Result {
+    result2 := models.PublicUser2{Data: user}
+    result2.Code.Type = statusType
+    result2.Code.Msg = statusMsg
+    return c.RenderJson(result2)
+}
+
+
+
 func (c Users) internalError() revel.Result {
     c.Response.Status = http.StatusUnauthorized       
     return c.RenderError(&revel.Error{
@@ -118,7 +134,13 @@ func (c Users) Login(username string, password string) revel.Result {
     result := models.User{}
     err := c1.Find(bson.M{"username": username, "password" : password}).One(&result)
     if err != nil {
-        log.Fatal(err)
+        return c.RenderPublicErrorJson("KO", "Authenticated: " + err.Error()) 
+        //log.Fatal(err)
+        /*return c.RenderError(&revel.Error{
+            Title:       "Not authenticated",
+            Description: "Username or Password are not valid for url " + string(c.Request.RequestURI ),
+        })*/
+
     }
 
     fmt.Println("User:", result)
@@ -127,16 +149,19 @@ func (c Users) Login(username string, password string) revel.Result {
 
     //tokenString := jwt.GenerateToken(username, signingKey)
     tokenString := jwt.GenerateToken(result, signingKey)
-
     fmt.Println("tokenString : ", tokenString)
-
-    result2 := models.PublicUser{User: &result, Token: tokenString}
-
-    fmt.Println("User2:", result2)
-
     c.Session["Token"] = string(tokenString)
 
+/*    result2 := models.PublicUser{User: &result, Token: tokenString}
+    fmt.Println("User2:", result2)
+
+    // Todo à encapsuler comme dans albums
+    result2.Code.Type = "OK"
+    result2.Code.Msg = "Authenticated successfull"
+
     return c.RenderJson(result2)
+*/
+    return c.RenderPublicUser2Json(&result,"OK", "Authenticated successfull")
 }
 
 func (c Users) Create(username string, firstname string, lastname string, email string, id bson.ObjectId, twitteruid string, facebookuid string, password string) revel.Result {

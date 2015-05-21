@@ -23,4 +23,10 @@ type PublicUser struct {
   *User
   Password omit `json:"password,omitempty"`
   Token string `json:"token,omitempty"`
+  Code Code `json:"code,omitempty"`
+}
+
+type PublicUser2 struct {
+  Data *User `json:"data,omitempty"`
+  Code Code `json:"code,omitempty"`
 }

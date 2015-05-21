@@ -10,7 +10,7 @@ import (
 "thumb":  {"w": 150, "h": 150}
 */
 type Image struct {
-	Origin string  `json:"origin,omitempty"`     // "MGO", "S3"
+  Origin string  `json:"origin,omitempty"`     // "MGO", "S3"
   Small bson.ObjectId `json:"small,omitempty"`
   Medium bson.ObjectId `json:"medium,omitempty"`
   Large bson.ObjectId `json:"large,omitempty"`
